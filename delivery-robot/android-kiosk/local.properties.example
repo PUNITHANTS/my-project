@@ -1,0 +1,8 @@
+# Copy to local.properties next to this file (local.properties is gitignored).
+#
+# Kotlin reads BuildConfig values produced by Gradle from these entries.
+# Optionally use env vars instead: KIOSK_API_BASE_URL, KIOSK_USERNAME, KIOSK_PASSWORD.
+
+api.base.url=https://your-backend.example/
+kiosk.username=kiosk
+kiosk.password=CHANGE_ME

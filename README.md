@@ -1,81 +1,148 @@
-# Campus Delivery Robot Backend
+# Campus Delivery Robot
 
-Initial backend scaffold for the campus delivery robot project using:
+Django REST backend for the campus delivery application. Supabase PostgreSQL stores application data; Redis stores short-lived AI conversation state and powers Channels notifications. The robot integration is still a mock adapter and does not command a physical robot.
 
-- Django
-- Django REST Framework
-- Django Channels
-- PostgreSQL
-- Redis
-- JWT authentication
+The active application components are grouped under `delivery-robot/`, matching the team's repository layout. See [`CODEBASE_GUIDE.md`](CODEBASE_GUIDE.md) for the backend file map and [`delivery-robot/README.md`](delivery-robot/README.md) for running the customer and vendor interfaces. The `archive/` folder keeps older local copies for reference; it is not the active application.
 
-## Project structure
+## Project layout
 
-- `config/` Django project settings, ASGI, URLs
-- `apps/accounts/` custom user model and profile endpoints
-- `apps/vendors/` vendor management
-- `apps/menu/` menu item management
-- `apps/orders/` order APIs and order lifecycle
-- `apps/dispatch/` mock robot dispatch records
-- `apps/notifications/` WebSocket consumer for live order updates
-
-## Setup for Supabase
-
-1. Create a virtual environment.
-2. Install dependencies:
-   `pip install -r requirements.txt`
-3. Copy `.env.example` to `.env` and fill in your Supabase database host and password.
-4. Start Redis locally:
-   `docker compose up -d`
-5. Run migrations against Supabase PostgreSQL:
-   `python manage.py makemigrations`
-   `python manage.py migrate`
-6. Create an admin user:
-   `python manage.py createsuperuser`
-7. Start the server:
-   `python manage.py runserver`
-
-## Supabase values to copy
-
-Get these from your Supabase project database settings:
-
-- `POSTGRES_HOST`
-- `POSTGRES_PASSWORD`
-- `POSTGRES_PORT`
-- `POSTGRES_DB`
-- `POSTGRES_USER`
-
-Keep `POSTGRES_SSLMODE=require` for Supabase.
-
-If Supabase gives you a pooler URL like:
-`postgresql://postgres.project-ref:[YOUR-PASSWORD]@aws-1-us-west-2.pooler.supabase.com:6543/postgres`
-
-then use:
-
-```env
-POSTGRES_DB=postgres
-POSTGRES_USER=postgres.project-ref
-POSTGRES_PASSWORD=your-supabase-db-password
-POSTGRES_HOST=aws-1-us-west-2.pooler.supabase.com
-POSTGRES_PORT=6543
-POSTGRES_SSLMODE=require
+```text
+New project/
+├── delivery-robot/
+│   ├── android-kiosk/    Customer kiosk app (Android/Jetpack Compose)
+│   ├── backend/          Django API, apps, settings, data, and Redis compose file
+│   ├── vendor-console/   Vendor portal (React/Vite)
+│   └── README.md         Frontend run instructions
+├── archive/              Preserved older copies; not used to run the app
+├── .venv/                Local Python environment at the workspace root
+├── README.md             Project overview and setup
+└── CODEBASE_GUIDE.md     Backend file map
 ```
 
-## Key API routes
+The admin interface is Django Admin at `/admin/`; there is no separate custom admin frontend in this repository.
 
-- `GET /api/health/`
-- `POST /api/auth/token/`
-- `GET /api/accounts/me/`
-- `GET|POST /api/vendors/`
-- `GET|POST /api/menu/items/`
-- `GET|POST /api/orders/`
-- `POST /api/orders/<id>/status/`
-- `GET /api/dispatch/`
+## Implemented workflow
 
-## WebSocket
+```text
+Student portal --JWT--> Django API
+    |                       |-- Supabase PostgreSQL: accounts, vendors, menu, orders, dispatch, status history
+    |                       |-- Redis: temporary conversation state and real-time channel layer
+    |                       `-- Groq: text-to-structured-order interpretation (backend only)
+    |
+    `-- POST /api/ai/parse-order/ -> validated draft -> clarification/repair loop
+                                      -> cart confirmation -> POST /api/orders/
 
-- `ws://localhost:8000/ws/orders/`
+Vendor portal --JWT--> menu availability/options and order lifecycle APIs
+Admin portal  --JWT--> Django admin and management APIs
+```
 
-## Suggested next step
+The conversational endpoint reads the live menu, checks availability and customization rules, preserves unedited cart lines, and returns a signed confirmation token only for a valid final cart. The order endpoint rechecks the current menu and requires that token for AI-created orders. C1-C5 are configurable clarification policies for the report experiments; C5 falls back to C3 until a classifier is trained.
 
-Connect the existing admin, user, and vendor frontends to these APIs and then add role-based permissions and a real robot provider adapter.
+## Local setup
+
+1. Create and activate a virtual environment, then install dependencies:
+
+   ```powershell
+   py -m venv .venv
+   .venv\Scripts\Activate.ps1
+   python -m pip install -r .\delivery-robot\backend\requirements.txt
+   ```
+
+2. Copy `delivery-robot/backend/.env.example` to `delivery-robot/backend/.env`. Fill in the Supabase database password, a strong `DJANGO_SECRET_KEY`, and a Groq API key. Set `GROQ_MODEL` to a model currently available to your Groq account. Keep all of these values in the backend environment; never put database credentials or the Groq key in frontend code.
+
+3. Start Redis from the backend folder. `docker-compose.yml` starts Redis only; it does not create a local PostgreSQL database. If Docker is unavailable, install/use a Redis-compatible local service or configure a managed Redis URL in `REDIS_URL`.
+
+   ```powershell
+   Set-Location .\delivery-robot\backend
+   docker compose up -d
+   ```
+
+4. Keep the terminal in `delivery-robot/backend`. Apply the additive migrations to your Supabase project and create a Django administrator:
+
+   ```powershell
+   python manage.py migrate
+   python manage.py createsuperuser
+   ```
+
+   Use `makemigrations` only after you intentionally change Django models. These migrations add menu options/availability, AI experiment logs, and order status history; they do not drop existing application tables.
+
+5. From the same backend folder, run the API:
+
+   ```powershell
+   python manage.py runserver
+   ```
+
+   Check `http://127.0.0.1:8000/api/health/` and `http://127.0.0.1:8000/admin/`.
+
+## Frontend API integration
+
+Run these API examples with Django running from `delivery-robot/backend`. Obtain JWT tokens from `POST /api/auth/token/`, then send `Authorization: Bearer <access-token>` for protected routes. Use the same UUID `session_id` across successive AI conversation turns:
+
+```http
+POST /api/ai/parse-order/
+Content-Type: application/json
+Authorization: Bearer <access-token>
+```
+
+```json
+{
+  "session_id": "a9c5e845-3ed7-49b7-a0ae-4797cba464d2",
+  "transcript": "One veggie wrap and a lemonade, deliver to the library"
+}
+```
+
+Use `action`, `clarificationNeeded`, `items`, `valid_for_submission`, and `confirmation_token` from the response. If the action is `ASK` or `REPAIR`, show the question and send the user's answer as the next transcript with the same session ID. On a valid `CONFIRM`, show the complete cart and obtain explicit user confirmation before creating an order. On `ESCALATE`, do not submit; direct the user to review the cart or contact the vendor. Never submit a cart merely because the AI returned a draft. Vendor menu create/update accepts nested `option_groups` and `availability_windows`; when either key is sent during an update, that full list replaces the existing list. Omit the key to leave it unchanged.
+
+```http
+POST /api/orders/
+Authorization: Bearer <access-token>
+Content-Type: application/json
+```
+
+```json
+{
+  "student_name": "Student Name",
+  "phone": "5551234567",
+  "vendor_id": 4,
+  "delivery_location": "Main Library",
+  "items": [
+    {"menu_item_id": 12, "quantity": 1, "customization": "Oat milk"}
+  ],
+  "ai_session_id": "a9c5e845-3ed7-49b7-a0ae-4797cba464d2",
+  "confirmation_token": "<token returned by the final AI response>"
+}
+```
+
+For a non-AI order, omit both `ai_session_id` and `confirmation_token`. Menu item IDs returned by the AI are strings representing the database IDs; send them as integers to the order API. Other core routes include `/api/vendors/`, `/api/menu/items/`, `/api/orders/`, `/api/orders/<id>/status/`, and `/api/dispatch/`.
+
+## Report experiments
+
+Run these commands from `delivery-robot/backend`. Create a frozen menu snapshot before annotating so menu IDs/options stay consistent:
+
+```powershell
+python manage.py export_menu_snapshot --output data/menu_snapshot_v1.json
+```
+
+Prepare JSONL dialogues as described in [`data/README.md`](data/README.md), then split by source group (not by individual turns) to avoid dialogue leakage:
+
+```powershell
+python manage.py split_dialogue_dataset --input data/dialogues.jsonl --output-dir data/splits
+python manage.py run_conversation_experiments --input data/splits/train.jsonl --output-dir data/evaluations/train --menu-snapshot data/menu_snapshot_v1.json
+python manage.py run_conversation_experiments --input data/splits/validation.jsonl --output-dir data/evaluations/validation --menu-snapshot data/menu_snapshot_v1.json
+```
+
+The runner writes per-policy metrics and derived feature JSONL files without transcripts. Train C5 using the train and validation feature files for C2, then run the held-out test experiment only after the threshold and model are fixed:
+
+```powershell
+python manage.py train_clarification_policy --train data/evaluations/train/c2_features.jsonl --validation data/evaluations/validation/c2_features.jsonl
+python manage.py run_conversation_experiments --input data/splits/test.jsonl --output-dir data/evaluations/test --menu-snapshot data/menu_snapshot_v1.json
+```
+
+Set `AI_LOG_TURNS=True` only when you have an approved reason and appropriate consent/retention rules for transcript logging. Logs are off by default; use `export_ai_turn_logs` and `purge_ai_turn_logs --older-than-days N --confirm` only under your project's data-governance process.
+
+## Safety and scope
+
+- `delivery-robot/backend/.env` is ignored by Git; share `.env.example`, not real credentials. If a real Supabase password or API key was committed or shared, rotate it in the provider dashboard and remove it from Git history.
+- Supabase's public/anon or service-role keys are not needed by this Django database connection. Frontends call Django, not PostgreSQL directly.
+- Configure CORS for the exact local/deployed frontend origins.
+- The current dispatch adapter records a mock robot acceptance. Physical robot credentials, navigation, payment processing, backend audio transcription, and production deployment are not implemented by this report-aligned backend change. Android voice input uses the device's configured recognizer to create text before sending it to Django.

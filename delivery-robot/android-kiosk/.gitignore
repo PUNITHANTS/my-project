@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+**/build/
+# Explicit module output dirs (helps IDEs ignore `app/` churn)
+/build/
+app/build/
+
+# Kotlin 2.x / Gradle may write here
+.kotlin/
+
+# Local machine / secrets
+local.properties
+*.keystore
+
+# Android Studio / IDEA (keep personal IDE state local)
+.idea/
+*.iml
+.DS_Store
+
+# Outputs
+captures/
+*.apk
+*.ap_
+*.aab
+
+# NDK
+.cxx/
+.externalNativeBuild/
