@@ -154,6 +154,12 @@ AI_DELIVERY_LOCATIONS = [
 AI_POLICY_MODEL_PATH = BASE_DIR / os.getenv(
     "AI_POLICY_MODEL_PATH", "artifacts/clarification_policy.joblib"
 )
+# Disk cache for temperature-0 model responses, so re-running an unchanged
+# experiment costs no API calls. On by default only in experiment mode.
+AI_RESPONSE_CACHE_DIR = os.getenv(
+    "AI_RESPONSE_CACHE_DIR",
+    str(BASE_DIR / "data" / "llm_cache") if AI_EXPERIMENT_MODE else "",
+)
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},

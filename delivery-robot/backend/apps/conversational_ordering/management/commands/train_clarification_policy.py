@@ -34,6 +34,9 @@ def read_rows(path, configuration):
             ) from exc
         if configuration and row.get("configuration") != configuration:
             continue
+        if row.get("label_valid") is False:
+            # Turns before a scripted correction: "wrong" is not a real label there.
+            continue
         rows.append((vector, label))
     return rows
 

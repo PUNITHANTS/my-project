@@ -1,8 +1,10 @@
+import hashlib
 import http.client
 import json
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 from urllib.parse import urlparse
 
 from django.conf import settings
@@ -28,13 +30,17 @@ def _post_with_rate_limit_retry(request):
     headers = {key: value for key, value in request.header_items()}
     parsed = urlparse(request.full_url)
     path = parsed.path or "/"
-    for rate_try in range(8):
-        connection = http.client.HTTPSConnection(parsed.hostname, timeout=120)
+    # Offline experiments wait out rate limits; a kiosk customer cannot, so live
+    # requests retry once and give up quickly (the kiosk then offers the menu).
+    tries = 8 if settings.AI_EXPERIMENT_MODE else 2
+    timeout = 120 if settings.AI_EXPERIMENT_MODE else 20
+    for rate_try in range(tries):
+        connection = http.client.HTTPSConnection(parsed.hostname, timeout=timeout)
         try:
             connection.request("POST", path, body=request.data, headers=headers)
             response = connection.getresponse()
             payload = response.read()
-            if response.status == 429 and rate_try < 7:
+            if response.status == 429 and rate_try < tries - 1:
                 retry_after = response.getheader("Retry-After")
                 try:
                     delay = float(retry_after) if retry_after else 2 ** rate_try
@@ -50,13 +56,73 @@ def _post_with_rate_limit_retry(request):
         except urllib.error.HTTPError:
             raise
         except (ConnectionResetError, TimeoutError, BrokenPipeError, OSError):
-            if rate_try >= 7:
+            if rate_try >= tries - 1:
                 raise
             time.sleep(min(2 ** rate_try, 20))
             continue
         finally:
             connection.close()
     raise AIProviderError("The model provider rate or quota limit was reached (HTTP 429). Wait and retry.")
+
+
+def compact_menu(menu):
+    """One short line per item: about a quarter of the tokens of the full JSON.
+
+    Only what the model needs to pick items and options is kept; prices, limits
+    and availability windows are enforced by the validator, not the model.
+    """
+    lines = []
+    for item in menu:
+        groups = "; ".join(
+            f"{group['name']} ({'required' if group['required'] else 'optional'}): "
+            + ", ".join(group["options"])
+            for group in item["option_groups"]
+        )
+        line = f"{item['id']} | {item['name']} | {item['vendor']}"
+        if groups:
+            line += f" | {groups}"
+        if not item["available"]:
+            line += " | UNAVAILABLE"
+        lines.append(line)
+    return lines
+
+
+def compact_draft(draft):
+    if not draft:
+        return None
+    return {
+        "items": [
+            {
+                "menu_item_id": item.get("menu_item_id"),
+                "mention": item.get("mention"),
+                "quantity": item.get("quantity"),
+                "customizations": item.get("customizations", []),
+            }
+            for item in draft.get("items", [])
+        ],
+        "delivery_location": draft.get("delivery_location"),
+    }
+
+
+def _cache_path(body):
+    directory = getattr(settings, "AI_RESPONSE_CACHE_DIR", None)
+    if not directory or body.get("temperature"):
+        # Sampled calls (S5 agreement) must stay independent, so never cache them.
+        return None
+    digest = hashlib.sha256(json.dumps(body, sort_keys=True).encode("utf-8")).hexdigest()
+    return Path(directory) / digest[:2] / f"{digest}.json"
+
+
+def _complete(request, body):
+    """POST one completion, served from the response cache when the same request was made before."""
+    path = _cache_path(body)
+    if path is not None and path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    result = _post_with_rate_limit_retry(request)
+    if path is not None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(result), encoding="utf-8")
+    return result
 
 
 def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
@@ -67,13 +133,14 @@ def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
 
     payload_for_model = {
         "customer_turn": transcript,
-        "current_draft": current_draft,
-        "recent_conversation": messages[-8:],
-        "live_menu": menu,
+        "current_draft": compact_draft(current_draft),
+        "recent_conversation": messages[-6:],
+        "menu": compact_menu(menu),
+        "menu_format": "id | name | vendor | option group (required/optional): options",
         "required_output_fields": {
             "items": [
                 {
-                    "menu_item_id": "menu UUID or null",
+                    "menu_item_id": "menu id or null",
                     "mention": "customer wording",
                     "quantity": 1,
                     "customizations": ["offered option names only"],
@@ -119,7 +186,7 @@ def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
             method="POST",
         )
         try:
-            result = _post_with_rate_limit_retry(request)
+            result = _complete(request, body)
             usage = result.get("usage") or {}
             total_usage["prompt_tokens"] += int(usage.get("prompt_tokens", 0))
             total_usage["completion_tokens"] += int(usage.get("completion_tokens", 0))

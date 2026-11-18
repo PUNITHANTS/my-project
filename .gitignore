@@ -23,3 +23,4 @@ delivery-robot/**/local.properties
 delivery-robot/**/.env
 delivery-robot/**/.env.*
 !delivery-robot/**/.env.example
+delivery-robot/backend/data/llm_cache/

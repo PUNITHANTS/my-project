@@ -8,6 +8,11 @@ from apps.vendors.models import Vendor
 
 
 STOP_WORDS = {"a", "an", "the", "of", "and", "with", "please", "some"}
+# Words that say how many, not which item: "two pizzas" should match pizzas.
+COUNT_WORDS = {
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+    "order", "orders", "couple", "few",
+}
 
 
 def normalize_text(value):
@@ -71,9 +76,37 @@ def load_menu_catalog():
     return catalog
 
 
+def _singular(word):
+    if len(word) <= 3 or word.endswith("ss"):
+        return word
+    if word.endswith("ies"):
+        return word[:-3] + "y"
+    if word.endswith("es") and word[:-2].endswith(("ch", "sh", "x")):
+        return word[:-2]
+    if word.endswith("s"):
+        return word[:-1]
+    return word
+
+
+def match_tokens(value):
+    """Content words of ``value``, singular, for comparing mentions with item names."""
+    words = normalize_text(value).split()
+    return {_singular(word) for word in words if not word.isdigit()} - STOP_WORDS - COUNT_WORDS
+
+
+def names_item(text, item_name):
+    """True when ``text`` contains every content word of the item's name.
+
+    "two grilled chicken burgers" names Grilled Chicken Burger; "a burger" names
+    no item, because several items share the word.
+    """
+    name_words = match_tokens(item_name)
+    return bool(name_words) and name_words <= match_tokens(text)
+
+
 def _match_score(mention, item_name):
-    left = set(normalize_text(mention).split()) - STOP_WORDS
-    right = set(normalize_text(item_name).split()) - STOP_WORDS
+    left = match_tokens(mention)
+    right = match_tokens(item_name)
     if not left or not right:
         return 0.0
     if left.issubset(right) or right.issubset(left):
@@ -84,11 +117,19 @@ def _match_score(mention, item_name):
 
 
 def _candidate_items(mention, catalog, threshold):
-    ranked = [
-        (item, _match_score(mention, item["name"]))
-        for item in catalog
-        if item["available"]
-    ]
+    available = [item for item in catalog if item["available"]]
+    # A mention that spells out an item's full name is not ambiguous, even when
+    # other names share some of its words. If several full names fit ("veggie
+    # burger" also contains "burger"), the longest, most specific one wins.
+    named = [item for item in available if names_item(mention, item["name"])]
+    if named:
+        longest = max(len(match_tokens(item["name"])) for item in named)
+        return [
+            {"menu_item_id": item["id"], "name": item["name"], "score": 1.0}
+            for item in named
+            if len(match_tokens(item["name"])) == longest
+        ]
+    ranked = [(item, _match_score(mention, item["name"])) for item in available]
     ranked.sort(key=lambda pair: pair[1], reverse=True)
     return [
         {"menu_item_id": item["id"], "name": item["name"], "score": round(score, 4)}
@@ -124,6 +165,19 @@ def validate_draft(parsed, catalog, near_match_threshold, resolved_item_ids=()):
         if menu_item is not None and menu_item["id"] in resolved:
             candidates = [
                 {"menu_item_id": menu_item["id"], "name": menu_item["name"], "score": 1.0}
+            ]
+        elif (
+            menu_item is not None
+            and not candidates
+            and not (match_tokens(line.mention) & match_tokens(menu_item["name"]))
+        ):
+            # The model mapped a general word ("two drinks") to an item whose name
+            # shares nothing with it. That choice is a guess, so treat the line as
+            # ambiguous among the same vendor's items instead of trusting it.
+            candidates = [
+                {"menu_item_id": item["id"], "name": item["name"], "score": 0.0}
+                for item in catalog
+                if item["available"] and item["vendor_id"] == menu_item["vendor_id"]
             ]
         near_matches.append(
             {

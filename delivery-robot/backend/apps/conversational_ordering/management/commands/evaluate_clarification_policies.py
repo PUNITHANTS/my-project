@@ -37,6 +37,8 @@ class Command(BaseCommand):
                 continue
             try:
                 row = json.loads(line)
+                if row.get("label_valid") is False:
+                    continue
                 features = row.get("features", row)
                 signals = {f"s{i}": float(features[f"s{i}"]) for i in range(1, 8)}
                 wrong = int(bool(row["wrong"]))

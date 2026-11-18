@@ -97,3 +97,19 @@ def clarification_options(validation):
     if ambiguous:
         return _item_options(ambiguous["line"], ambiguous["candidates"])
     return []
+
+
+def question_line(action, validation):
+    """The cart line a REPAIR or ASK question is about, or None for the whole order.
+
+    Mirrors the order in which the question builders pick what to ask.
+    """
+    if action == "REPAIR":
+        violations = validation["violations"]
+        return violations[0].get("line") if violations else None
+    if validation["missing_details"]:
+        return validation["missing_details"][0]["line"]
+    ambiguous = next(
+        (match for match in validation["near_matches"] if match["count"] >= 2), None
+    )
+    return ambiguous["line"] if ambiguous else None

@@ -11,6 +11,23 @@ from apps.conversational_ordering.sessions import initial_session
 
 
 POLICIES = ("C1", "C2", "C3", "C4", "C5")
+REPLY_KINDS = ("answer", "correction")
+
+
+def reply_kind(dialogue):
+    """How the simulated customer uses ``clarification_replies``.
+
+    "answer": a reply is sent only when the assistant asks a question.
+    "correction": the customer changes their mind after seeing the cart, so the
+    reply is sent whether or not the assistant asked. Defaults to "correction"
+    for the correction category and "answer" otherwise.
+    """
+    kind = dialogue.get("reply_kind") or (
+        "correction" if dialogue["category"] == "correction" else "answer"
+    )
+    if kind not in REPLY_KINDS:
+        raise CommandError(f"Dialogue {dialogue['dialogue_id']} has unknown reply_kind {kind!r}.")
+    return kind
 
 
 def _selected_policies(raw):
@@ -110,6 +127,11 @@ class Command(BaseCommand):
         parser.add_argument("--menu-snapshot", help="Frozen catalog JSON produced by export_menu_snapshot")
         parser.add_argument("--max-turns", type=int, default=10)
         parser.add_argument(
+            "--trace",
+            action="store_true",
+            help="Also write <policy>_trace.jsonl with each turn's draft and action (no transcripts).",
+        )
+        parser.add_argument(
             "--policies",
             default="",
             help="Comma-separated subset of C1-C5. Defaults to all five.",
@@ -124,6 +146,9 @@ class Command(BaseCommand):
         output_dir.mkdir(parents=True, exist_ok=True)
         target_files = [output_dir / f"{name.lower()}_features.jsonl" for name in policies]
         target_files.append(output_dir / "summary.json")
+        target_files.append(output_dir / "progress.jsonl")
+        if options["trace"]:
+            target_files += [output_dir / f"{name.lower()}_trace.jsonl" for name in policies]
         existing = [str(path) for path in target_files if path.exists()]
         if existing:
             raise CommandError("Refusing to overwrite: " + ", ".join(existing))
@@ -148,8 +173,13 @@ class Command(BaseCommand):
                 )
 
         summaries = {}
+        for dialogue in dialogues:
+            reply_kind(dialogue)
+
         for policy in policies:
             feature_rows = []
+            trace_rows = []
+            by_category = {}
             dialogue_results = []
             turns_seen = []
             total_questions = 0
@@ -166,6 +196,7 @@ class Command(BaseCommand):
                 utterances = [dialogue["initial_utterance"]]
                 replies = list(dialogue.get("clarification_replies", []))
                 reply_index = 0
+                kind = reply_kind(dialogue)
                 final_result = None
                 dialogue_turn_count = 0
 
@@ -192,10 +223,16 @@ class Command(BaseCommand):
                     wrong = not matches_gold(result, dialogue["gold_order"])
                     asks = result["action"] in ("ASK", "REPAIR")
                     raw_validation = result["raw_validation"]
-                    wrong_turns += int(wrong)
-                    correct_turns += int(not wrong)
-                    missed += int(wrong and not asks)
-                    unnecessary += int((not wrong) and asks)
+                    # Before a scripted correction is delivered, the gold order is
+                    # one the customer has not asked for yet, so "wrong" says
+                    # nothing about whether a question was needed. Those turns are
+                    # kept for the record but left out of labels and rates.
+                    label_valid = kind != "correction" or reply_index >= len(replies)
+                    if label_valid:
+                        wrong_turns += int(wrong)
+                        correct_turns += int(not wrong)
+                        missed += int(wrong and not asks)
+                        unnecessary += int((not wrong) and asks)
                     total_questions += int(asks)
                     signals = result["signals"]
                     feature_rows.append(
@@ -207,6 +244,7 @@ class Command(BaseCommand):
                             "turn_index": dialogue_turn_count,
                             "features": signals,
                             "wrong": bool(wrong),
+                            "label_valid": label_valid,
                             "model_requested_clarification": result[
                                 "model_requested_clarification"
                             ],
@@ -221,7 +259,31 @@ class Command(BaseCommand):
                             "near_match_count": signals["s3"],
                         }
                     )
-                    if asks and reply_index < len(replies):
+                    if options["trace"]:
+                        trace_rows.append(
+                            {
+                                "dialogue_id": str(dialogue["dialogue_id"]),
+                                "category": dialogue["category"],
+                                "turn_index": dialogue_turn_count,
+                                "action": result["action"],
+                                "exact": not wrong,
+                                "label_valid": label_valid,
+                                "items": [
+                                    [line["menuItemId"], line["quantity"], line["customizations"]]
+                                    for line in result["items"]
+                                ],
+                                "delivery_location": result["deliveryLocation"],
+                                "violations": [v["code"] for v in raw_validation["violations"]],
+                                "missing_details": len(raw_validation["missing_details"]),
+                                "preservation": result["preservation_checks"],
+                                "gold_items": [
+                                    [line["menu_item_id"], line["quantity"], line.get("customizations", [])]
+                                    for line in dialogue["gold_order"]["items"]
+                                ],
+                                "gold_location": dialogue["gold_order"]["delivery_location"],
+                            }
+                        )
+                    if reply_index < len(replies) and (asks or kind == "correction"):
                         utterances.append(replies[reply_index])
                         reply_index += 1
                     else:
@@ -232,6 +294,9 @@ class Command(BaseCommand):
                 exact = matches_gold(final_result, dialogue["gold_order"])
                 final_valid = bool(final_result["valid_for_submission"])
                 turns_seen.append(dialogue_turn_count)
+                bucket = by_category.setdefault(dialogue["category"], {"n": 0, "exact": 0})
+                bucket["n"] += 1
+                bucket["exact"] += int(exact)
                 dialogue_results.append(
                     {
                         "exact": exact,
@@ -275,9 +340,15 @@ class Command(BaseCommand):
                 "mean_tokens_per_dialogue": total_tokens / count,
                 "wrong_turns": wrong_turns,
                 "correct_turns": correct_turns,
+                "by_category": {
+                    name: {"n": row["n"], "exact_order_accuracy": row["exact"] / row["n"]}
+                    for name, row in sorted(by_category.items())
+                },
             }
             summaries[policy] = summary
             _write_jsonl(output_dir / f"{policy.lower()}_features.jsonl", feature_rows)
+            if options["trace"]:
+                _write_jsonl(output_dir / f"{policy.lower()}_trace.jsonl", trace_rows)
 
         (output_dir / "summary.json").write_text(
             json.dumps(summaries, indent=2), encoding="utf-8"

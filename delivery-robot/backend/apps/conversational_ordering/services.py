@@ -4,9 +4,14 @@ from django.conf import settings
 from django.core import signing
 
 from .groq_client import AIProviderError, interpret_turn
-from .menu_validation import load_menu_catalog, normalize_text, validate_draft
+from .menu_validation import load_menu_catalog, names_item, normalize_text, validate_draft
 from .policies import choose_clarification_policy
-from .questions import REMOVE_CUSTOMIZATION, clarification_options, repair_options
+from .questions import (
+    REMOVE_CUSTOMIZATION,
+    clarification_options,
+    question_line,
+    repair_options,
+)
 from .schemas import ParsedOrder
 
 
@@ -77,17 +82,23 @@ def submission_cart_signature(vendor_id, delivery_location, items):
 
 
 def _explicitly_mentions(transcript, menu_item):
-    words = set(normalize_text(transcript).split())
-    name_words = set(normalize_text(menu_item["name"]).split())
-    name_words -= {"a", "an", "the", "of", "and"}
-    return bool(name_words) and (
-        normalize_text(menu_item["name"]) in normalize_text(transcript)
-        or (len(name_words) == 1 and name_words.issubset(words))
-        or (len(name_words) > 1 and len(name_words & words) >= len(name_words))
+    return names_item(transcript, menu_item["name"])
+
+
+def _is_asked_line(old_item, asked_line):
+    return bool(asked_line) and (
+        str(old_item.get("menu_item_id")) == asked_line["menu_item_id"]
+        and old_item.get("mention") == asked_line["mention"]
     )
 
 
-def _preserve_untouched(previous, parsed, transcript, catalog):
+def _preserve_untouched(previous, parsed, transcript, catalog, asked_line=None):
+    """Put back lines the model dropped or changed although the customer did not.
+
+    ``asked_line`` is the line the previous question was about. The customer's
+    answer is allowed to replace or change it ("which burger?" -> "a grilled
+    chicken burger"), so it is never restored.
+    """
     if not previous or not previous.get("items"):
         return parsed, []
 
@@ -102,16 +113,25 @@ def _preserve_untouched(previous, parsed, transcript, catalog):
     )
     removal = bool(re.search(r"\b(remove|delete|drop|cancel|without|no longer)\b", normalized_transcript))
     preservation_notes = []
+    old_ids = {str(item.get("menu_item_id")) for item in old_items}
+    # The answer brought in a line that was not there before: the asked-about
+    # line was replaced, not lost.
+    has_replacement = any(item_id not in old_ids for item_id in new_by_id)
 
     for old_item in old_items:
         item_id = str(old_item.get("menu_item_id"))
         menu_item = catalog_by_id.get(item_id)
-        explicitly_touched = bool(menu_item and _explicitly_mentions(transcript, menu_item))
+        explicitly_touched = bool(
+            (menu_item and _explicitly_mentions(transcript, menu_item))
+            or _is_asked_line(old_item, asked_line)
+        )
         can_apply_reference = generic_reference and len(old_items) == 1
         current = new_by_id.get(item_id)
 
         if current is None:
             if removal and (explicitly_touched or can_apply_reference):
+                continue
+            if has_replacement and _is_asked_line(old_item, asked_line):
                 continue
             new_data["items"].append(old_item)
             preservation_notes.append({"menu_item_id": item_id, "action": "restored_missing_line"})
@@ -327,9 +347,17 @@ def _decide(
             "Please review the cart or contact the vendor before ordering."
         )
 
+    state["asked_line"] = None
     if action in ("ASK", "REPAIR") and question:
         questions_asked += 1
         state.setdefault("asked_slots", []).append(question)
+        line_index = question_line(action, validation)
+        if line_index is not None and line_index < len(parsed.items):
+            asked = parsed.items[line_index]
+            state["asked_line"] = {
+                "menu_item_id": str(asked.menu_item_id),
+                "mention": asked.mention,
+            }
 
     valid_for_submission = (
         safety_validation["valid"] and not safety_validation["missing_details"]
@@ -397,8 +425,19 @@ def parse_customer_turn(
             clarification_needed="I could not interpret that request. Could you rephrase it?",
         )
     parsed, preservation_notes = _preserve_untouched(
-        prior_draft, parsed, transcript, catalog
+        prior_draft, parsed, transcript, catalog, state.get("asked_line")
     )
+    # Items the customer has called by their full name are settled; the
+    # validator stops offering look-alikes for them.
+    by_id = {item["id"]: item for item in catalog}
+    named = {
+        str(line.menu_item_id)
+        for line in parsed.items
+        if str(line.menu_item_id) in by_id
+        and _explicitly_mentions(transcript, by_id[str(line.menu_item_id)])
+    }
+    if named:
+        state["resolved_item_ids"] = sorted(set(state.get("resolved_item_ids", [])) | named)
 
     agreement, sample_usage = _sample_agreement(
         parsed,
