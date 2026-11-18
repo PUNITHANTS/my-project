@@ -7,27 +7,63 @@ data class TokenResponse(
     @SerializedName("refresh") val refresh: String
 )
 
-data class ParseOrderRequest(
-    @SerializedName("session_id") val sessionId: String,
-    @SerializedName("transcript") val transcript: String
+/** A tapped option, sent back exactly as the previous turn offered it. */
+data class SelectedOption(
+    @SerializedName("slot") val slot: String,
+    @SerializedName("menuItemId") val menuItemId: String? = null,
+    @SerializedName("value") val value: String? = null
 )
 
-data class AiDraftItem(
+/** A touch edit on the cart card; quantity 0 removes the line. */
+data class CartEdit(
+    @SerializedName("line") val line: Int,
+    @SerializedName("quantity") val quantity: Int
+)
+
+/** One assistant turn. Exactly one of transcript, selectedOption, cartEdit is set. */
+data class ParseOrderRequest(
+    @SerializedName("session_id") val sessionId: String,
+    @SerializedName("transcript") val transcript: String? = null,
+    @SerializedName("selected_option") val selectedOption: SelectedOption? = null,
+    @SerializedName("cart_edit") val cartEdit: CartEdit? = null
+)
+
+data class AiOption(
+    @SerializedName("slot") val slot: String,
+    @SerializedName("label") val label: String,
+    @SerializedName("menuItemId") val menuItemId: String? = null,
+    @SerializedName("value") val value: String? = null
+)
+
+data class AiCartItem(
+    @SerializedName("line") val line: Int,
     @SerializedName("menuItemId") val menuItemId: String?,
     @SerializedName("name") val name: String,
     @SerializedName("quantity") val quantity: Int,
-    @SerializedName("customizations") val customizations: List<String> = emptyList()
+    @SerializedName("customization") val customization: String? = null,
+    @SerializedName("unitPrice") val unitPrice: String? = null
 )
 
+data class AiCart(
+    @SerializedName("items") val items: List<AiCartItem>? = null,
+    @SerializedName("vendorId") val vendorId: Int? = null,
+    @SerializedName("vendorName") val vendorName: String? = null,
+    @SerializedName("deliveryLocation") val deliveryLocation: String? = null
+) {
+    val lines: List<AiCartItem> get() = items.orEmpty()
+}
+
+// Gson leaves fields that are missing from the JSON as null whatever the Kotlin
+// default says, so everything optional here is declared nullable.
 data class AiParseOrderResponse(
-    @SerializedName("session_id") val sessionId: String,
-    @SerializedName("action") val action: String,
-    @SerializedName("items") val items: List<AiDraftItem> = emptyList(),
-    @SerializedName("vendorId") val vendorId: Int?,
-    @SerializedName("deliveryLocation") val deliveryLocation: String?,
-    @SerializedName("clarificationNeeded") val clarificationNeeded: String?,
+    @SerializedName("action") val action: String?,
+    @SerializedName("message") val message: String? = null,
+    @SerializedName("options") val options: List<AiOption>? = null,
+    @SerializedName("cart") val cart: AiCart? = null,
+    @SerializedName("clarificationNeeded") val clarificationNeeded: String? = null,
     @SerializedName("valid_for_submission") val validForSubmission: Boolean = false,
-    @SerializedName("confirmation_token") val confirmationToken: String?
+    @SerializedName("confirmation_token") val confirmationToken: String? = null,
+    @SerializedName("turn_id") val turnId: String? = null
 )
 
 data class VendorDto(

@@ -118,6 +118,15 @@ AI_MAX_QUESTIONS = int(os.getenv("AI_MAX_QUESTIONS", "3"))
 AI_SESSION_TTL_SECONDS = int(os.getenv("AI_SESSION_TTL_SECONDS", "900"))
 AI_SAMPLE_AGREEMENT_K = int(os.getenv("AI_SAMPLE_AGREEMENT_K", "0"))
 AI_LOG_TURNS = os.getenv("AI_LOG_TURNS", "False").lower() == "true"
+# Offered as tap options when the assistant asks where to deliver.
+AI_DELIVERY_LOCATIONS = [
+    location.strip()
+    for location in os.getenv(
+        "AI_DELIVERY_LOCATIONS",
+        "Student Center,Student Rec Center,Blanton Hall,University Hall",
+    ).split(",")
+    if location.strip()
+]
 AI_POLICY_MODEL_PATH = BASE_DIR / os.getenv(
     "AI_POLICY_MODEL_PATH", "artifacts/clarification_policy.joblib"
 )

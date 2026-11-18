@@ -6,10 +6,15 @@ from django.core import signing
 from .groq_client import AIProviderError, interpret_turn
 from .menu_validation import load_menu_catalog, normalize_text, validate_draft
 from .policies import choose_clarification_policy
+from .questions import REMOVE_CUSTOMIZATION, clarification_options, repair_options
 from .schemas import ParsedOrder
 
 
 CONFIRMATION_SALT = "campus-delivery-ai-confirmation-v1"
+
+
+class InvalidTurnInput(Exception):
+    """A tapped option or cart edit that does not fit the current draft."""
 
 
 def _signature_data(parsed, vendor_id):
@@ -237,40 +242,55 @@ def _sample_agreement(primary, menu, previous, messages, transcript, sample_coun
     return (agree / successful if successful else 0.0), usage_total
 
 
-def parse_customer_turn(
+def _cart_output(parsed, catalog, vendor_id):
+    """The cart in the kiosk contract's shape; ``line`` is the slot index."""
+    by_id = {item["id"]: item for item in catalog}
+    vendor_name = next(
+        (item["vendor"] for item in catalog if item["vendor_id"] == vendor_id), None
+    )
+    return {
+        "items": [
+            {
+                "line": index,
+                "menuItemId": item.menu_item_id,
+                "name": by_id.get(str(item.menu_item_id), {}).get("name", item.mention),
+                "quantity": item.quantity,
+                "customization": ", ".join(item.customizations),
+                "customizations": item.customizations,
+                "unitPrice": by_id.get(str(item.menu_item_id), {}).get("price"),
+            }
+            for index, item in enumerate(parsed.items)
+        ],
+        "vendorId": vendor_id,
+        "vendorName": vendor_name,
+        "deliveryLocation": parsed.delivery_location,
+    }
+
+
+def _decide(
     session_id,
     user_id,
-    transcript,
+    parsed,
     state,
-    configuration=None,
-    catalog_override=None,
+    catalog,
+    configuration,
+    user_text,
+    usage,
+    agreement=0.0,
+    preservation_notes=(),
+    llm_called=True,
 ):
-    catalog = catalog_override if catalog_override is not None else load_menu_catalog()
-    prior_messages = state.get("messages", [])
-    prior_draft = state.get("draft_order")
-    menu_payload = catalog
+    """Validate a draft, choose the next action and build the turn response.
 
-    parsed, usage = interpret_turn(
-        transcript,
-        menu_payload,
-        prior_draft,
-        prior_messages,
-    )
-    if parsed is None:
-        parsed = ParsedOrder(
-            items=[],
-            delivery_location=(prior_draft or {}).get("delivery_location"),
-            confidence=0.0,
-            delivery_location_confidence=0.0,
-            clarification_needed="I could not interpret that request. Could you rephrase it?",
-        )
-    parsed, preservation_notes = _preserve_untouched(
-        prior_draft, parsed, transcript, catalog
-    )
-
+    Shared by LLM turns and by the LLM-free turns (tapped option, cart edit), so
+    every draft the kiosk sees has passed the same checks.
+    """
     configuration = (configuration or settings.AI_DEFAULT_POLICY).upper()
     safety_validation = validate_draft(
-        parsed, catalog, settings.AI_NEAR_MATCH_THRESHOLD
+        parsed,
+        catalog,
+        settings.AI_NEAR_MATCH_THRESHOLD,
+        state.get("resolved_item_ids", ()),
     )
     validation = safety_validation
     if configuration == "C1":
@@ -282,29 +302,18 @@ def parse_customer_turn(
             "vendor_id": validation["vendor_id"],
         }
 
-    agreement, sample_usage = _sample_agreement(
-        parsed,
-        menu_payload,
-        prior_draft,
-        prior_messages,
-        transcript,
-        settings.AI_SAMPLE_AGREEMENT_K,
-    )
-    for key in usage:
-        usage[key] += sample_usage[key]
     signals = _signals(parsed, validation, agreement)
-
     policy_result = choose_clarification_policy(configuration, signals, validation)
     question = None
+    options = []
     if validation["violations"] and configuration != "C1":
         action = "REPAIR"
         question = _repair_question(validation)
-    elif validation["missing_details"] and configuration != "C1":
+        options = repair_options(validation, parsed, catalog)
+    elif (validation["missing_details"] and configuration != "C1") or policy_result["ask"]:
         action = "ASK"
         question = _clarification_question(parsed, validation, signals)
-    elif policy_result["ask"]:
-        action = "ASK"
-        question = _clarification_question(parsed, validation, signals)
+        options = clarification_options(validation)
     else:
         action = "CONFIRM"
 
@@ -312,6 +321,7 @@ def parse_customer_turn(
     budget_exhausted = bool(question and questions_asked >= settings.AI_MAX_QUESTIONS)
     if budget_exhausted:
         action = "ESCALATE"
+        options = []
         question = (
             "I could not safely resolve this order within the clarification limit. "
             "Please review the cart or contact the vendor before ordering."
@@ -324,22 +334,28 @@ def parse_customer_turn(
     valid_for_submission = (
         safety_validation["valid"] and not safety_validation["missing_details"]
     )
-    public_draft = _draft_output(parsed, catalog, validation.get("vendor_id"))
+    vendor_id = validation.get("vendor_id")
+    public_draft = _draft_output(parsed, catalog, vendor_id)
     token = None
-    if action == "CONFIRM" and valid_for_submission and validation.get("vendor_id"):
-        token = confirmation_token(
-            session_id, user_id, parsed, validation["vendor_id"]
-        )
+    if action == "CONFIRM" and valid_for_submission and vendor_id:
+        token = confirmation_token(session_id, user_id, parsed, vendor_id)
 
+    message = question or "Please review the cart and confirm."
     state["draft_order"] = parsed.model_dump(mode="json")
-    state["messages"] = (prior_messages + [
-        {"role": "user", "content": transcript},
-        {"role": "assistant", "content": question or "Please review the cart and confirm."},
+    state["messages"] = (state.get("messages", []) + [
+        {"role": "user", "content": user_text},
+        {"role": "assistant", "content": message},
     ])[-16:]
     state["questions_asked"] = questions_asked
+    # Only these options may come back as selected_option on the next turn.
+    state["offered_options"] = options
     result = {
         **public_draft,
         "session_id": str(session_id),
+        "message": message,
+        "options": options,
+        "cart": _cart_output(parsed, catalog, vendor_id),
+        "llm_called": llm_called,
         "confidence": parsed.confidence,
         "clarificationNeeded": question,
         "model_requested_clarification": bool(parsed.clarification_needed),
@@ -352,8 +368,258 @@ def parse_customer_turn(
         "policy_probability": policy_result["probability"],
         "policy_fallback": policy_result["fallback"],
         "question_budget_exhausted": budget_exhausted,
-        "preservation_checks": preservation_notes,
+        "preservation_checks": list(preservation_notes),
         "confirmation_token": token,
         "token_usage": usage,
     }
     return result, state
+
+
+def parse_customer_turn(
+    session_id,
+    user_id,
+    transcript,
+    state,
+    configuration=None,
+    catalog_override=None,
+):
+    catalog = catalog_override if catalog_override is not None else load_menu_catalog()
+    prior_messages = state.get("messages", [])
+    prior_draft = state.get("draft_order")
+
+    parsed, usage = interpret_turn(transcript, catalog, prior_draft, prior_messages)
+    if parsed is None:
+        parsed = ParsedOrder(
+            items=[],
+            delivery_location=(prior_draft or {}).get("delivery_location"),
+            confidence=0.0,
+            delivery_location_confidence=0.0,
+            clarification_needed="I could not interpret that request. Could you rephrase it?",
+        )
+    parsed, preservation_notes = _preserve_untouched(
+        prior_draft, parsed, transcript, catalog
+    )
+
+    agreement, sample_usage = _sample_agreement(
+        parsed,
+        catalog,
+        prior_draft,
+        prior_messages,
+        transcript,
+        settings.AI_SAMPLE_AGREEMENT_K,
+    )
+    for key in usage:
+        usage[key] += sample_usage[key]
+
+    return _decide(
+        session_id,
+        user_id,
+        parsed,
+        state,
+        catalog,
+        configuration,
+        transcript,
+        usage,
+        agreement=agreement,
+        preservation_notes=preservation_notes,
+    )
+
+
+def _stored_draft(state):
+    draft = state.get("draft_order")
+    if not draft:
+        raise InvalidTurnInput("There is no order in progress to change.")
+    return ParsedOrder.model_validate(draft).model_dump(mode="json")
+
+
+def _line(draft, index):
+    if not 0 <= index < len(draft["items"]):
+        raise InvalidTurnInput("That cart line no longer exists.")
+    return draft["items"][index]
+
+
+def _slot_line(slot):
+    try:
+        return int(slot.split(":", 1)[1])
+    except (IndexError, ValueError) as exc:
+        raise InvalidTurnInput("Unknown option slot.") from exc
+
+
+def _apply_customization(line, menu_item, value):
+    offered = {
+        normalize_text(option)
+        for group in menu_item["option_groups"]
+        for option in group["options"]
+    }
+    # Selections the menu does not offer are what the repair question was about.
+    kept = [name for name in line["customizations"] if normalize_text(name) in offered]
+    if value != REMOVE_CUSTOMIZATION:
+        group = next(
+            (
+                group
+                for group in menu_item["option_groups"]
+                if normalize_text(value)
+                in {normalize_text(option) for option in group["options"]}
+            ),
+            None,
+        )
+        if group is None:
+            raise InvalidTurnInput("That option is no longer offered.")
+        in_group = {normalize_text(option) for option in group["options"]}
+        same_group = [name for name in kept if normalize_text(name) in in_group]
+        # Make room so the tapped option never exceeds the group's limit.
+        overflow = len(same_group) + 1 - group["max_selections"]
+        for name in same_group[: max(overflow, 0)]:
+            kept.remove(name)
+        if normalize_text(value) not in {normalize_text(name) for name in kept}:
+            kept.append(value)
+    line["customizations"] = kept
+    line["confidence"]["customization"] = 1.0
+
+
+def _finish_direct_turn(session_id, user_id, draft, state, catalog, configuration, user_text):
+    # The model's own question was about the previous draft; code has changed it.
+    draft["clarification_needed"] = None
+    return _decide(
+        session_id,
+        user_id,
+        ParsedOrder.model_validate(draft),
+        state,
+        catalog,
+        configuration,
+        user_text,
+        {"prompt_tokens": 0, "completion_tokens": 0},
+        llm_called=False,
+    )
+
+
+def apply_selected_option(
+    session_id, user_id, selected, state, configuration=None, catalog_override=None
+):
+    """Apply a tapped option to the draft in code, with no LLM call."""
+    offered = next(
+        (
+            option
+            for option in state.get("offered_options", [])
+            if option["slot"] == selected.get("slot")
+            and option.get("menuItemId") == selected.get("menuItemId")
+            and option.get("value") == selected.get("value")
+        ),
+        None,
+    )
+    if offered is None:
+        raise InvalidTurnInput(
+            "That option is no longer available. Please answer the latest question."
+        )
+
+    catalog = catalog_override if catalog_override is not None else load_menu_catalog()
+    by_id = {item["id"]: item for item in catalog}
+    draft = _stored_draft(state)
+    slot = offered["slot"]
+    kind = slot.split(":", 1)[0]
+
+    if kind == "location":
+        draft["delivery_location"] = offered["value"]
+        draft["delivery_location_confidence"] = 1.0
+    elif kind == "vendor":
+        draft["items"] = [
+            line
+            for line in draft["items"]
+            if str(by_id.get(str(line["menu_item_id"]), {}).get("vendor_id"))
+            == offered["value"]
+        ]
+    elif kind == "item":
+        line = _line(draft, _slot_line(slot))
+        menu_item = by_id.get(offered["menuItemId"])
+        if menu_item is None:
+            raise InvalidTurnInput("That menu item is no longer available.")
+        if line["menu_item_id"] != menu_item["id"]:
+            # Customizations chosen for a different item may not exist on this one.
+            line["customizations"] = []
+        line["menu_item_id"] = menu_item["id"]
+        line["mention"] = menu_item["name"]
+        line["confidence"]["item"] = 1.0
+        resolved = set(state.get("resolved_item_ids", []))
+        resolved.add(menu_item["id"])
+        state["resolved_item_ids"] = sorted(resolved)
+    elif kind == "option":
+        line = _line(draft, _slot_line(slot))
+        menu_item = by_id.get(str(line["menu_item_id"]))
+        if menu_item is None:
+            raise InvalidTurnInput("That menu item is no longer available.")
+        _apply_customization(line, menu_item, offered["value"])
+    elif kind == "quantity":
+        line = _line(draft, _slot_line(slot))
+        line["quantity"] = int(offered["value"])
+        line["confidence"]["quantity"] = 1.0
+    else:
+        raise InvalidTurnInput("Unknown option slot.")
+
+    return _finish_direct_turn(
+        session_id,
+        user_id,
+        draft,
+        state,
+        catalog,
+        configuration,
+        f"[selected] {offered['label']}",
+    )
+
+
+def apply_cart_edit(
+    session_id, user_id, edit, state, configuration=None, catalog_override=None
+):
+    """Change a line's quantity, or remove it with quantity 0, with no LLM call."""
+    catalog = catalog_override if catalog_override is not None else load_menu_catalog()
+    draft = _stored_draft(state)
+    line = _line(draft, edit["line"])
+    name = next(
+        (item["name"] for item in catalog if item["id"] == str(line["menu_item_id"])),
+        line["mention"],
+    )
+    if edit["quantity"] == 0:
+        draft["items"].remove(line)
+        user_text = f"[cart edit] removed {name}"
+    else:
+        line["quantity"] = edit["quantity"]
+        line["confidence"]["quantity"] = 1.0
+        user_text = f"[cart edit] {name} x {edit['quantity']}"
+    return _finish_direct_turn(
+        session_id, user_id, draft, state, catalog, configuration, user_text
+    )
+
+
+def provider_error_result(session_id, state, detail):
+    """The ERROR turn the kiosk gets when the model cannot be reached.
+
+    It carries the cart as it stood, so the kiosk can hand it to the touch menu.
+    """
+    catalog = load_menu_catalog()
+    draft = state.get("draft_order")
+    parsed = (
+        ParsedOrder.model_validate(draft)
+        if draft
+        else ParsedOrder(
+            items=[],
+            delivery_location=None,
+            confidence=0.0,
+            delivery_location_confidence=0.0,
+        )
+    )
+    line_item_ids = {str(line.menu_item_id) for line in parsed.items}
+    vendor_ids = {item["vendor_id"] for item in catalog if item["id"] in line_item_ids}
+    vendor_id = next(iter(vendor_ids)) if len(vendor_ids) == 1 else None
+    return {
+        **_draft_output(parsed, catalog, vendor_id),
+        "session_id": str(session_id),
+        "action": "ERROR",
+        "message": "The ordering assistant is unavailable right now. Please order from the menu.",
+        "detail": detail,
+        "options": [],
+        "cart": _cart_output(parsed, catalog, vendor_id),
+        "llm_called": True,
+        "confidence": 0.0,
+        "clarificationNeeded": None,
+        "valid_for_submission": False,
+        "confirmation_token": None,
+    }

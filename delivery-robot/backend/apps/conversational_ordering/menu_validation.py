@@ -97,7 +97,14 @@ def _candidate_items(mention, catalog, threshold):
     ]
 
 
-def validate_draft(parsed, catalog, near_match_threshold):
+def validate_draft(parsed, catalog, near_match_threshold, resolved_item_ids=()):
+    """Check a draft against the menu.
+
+    ``resolved_item_ids`` are menu items the customer picked by tapping an option;
+    a line holding one of them is no longer treated as an ambiguous mention.
+    Every per-line entry carries ``line``, the line's position in the draft.
+    """
+    resolved = {str(value) for value in resolved_item_ids}
     by_id = {item["id"]: item for item in catalog}
     violations = []
     missing_details = []
@@ -111,16 +118,26 @@ def validate_draft(parsed, catalog, near_match_threshold):
             {"code": "missing_location", "message": "A delivery location is required."}
         )
 
-    for line in parsed.items:
+    for index, line in enumerate(parsed.items):
         menu_item = by_id.get(str(line.menu_item_id)) if line.menu_item_id else None
         candidates = _candidate_items(line.mention, catalog, near_match_threshold)
+        if menu_item is not None and menu_item["id"] in resolved:
+            candidates = [
+                {"menu_item_id": menu_item["id"], "name": menu_item["name"], "score": 1.0}
+            ]
         near_matches.append(
-            {"mention": line.mention, "count": len(candidates), "candidates": candidates}
+            {
+                "line": index,
+                "mention": line.mention,
+                "count": len(candidates),
+                "candidates": candidates,
+            }
         )
         if menu_item is None:
             violations.append(
                 {
                     "code": "unknown_item",
+                    "line": index,
                     "item_id": line.menu_item_id,
                     "message": f"'{line.mention}' does not identify a current menu item.",
                     "alternatives": candidates[:5],
@@ -134,6 +151,7 @@ def validate_draft(parsed, catalog, near_match_threshold):
             violations.append(
                 {
                     "code": "unavailable_item",
+                    "line": index,
                     "item_id": menu_item["id"],
                     "message": f"{menu_item['name']} is currently unavailable.",
                     "alternatives": _candidate_items(
@@ -145,6 +163,8 @@ def validate_draft(parsed, catalog, near_match_threshold):
             violations.append(
                 {
                     "code": "quantity_limit",
+                    "line": index,
+                    "max_quantity": menu_item["max_quantity"],
                     "item_id": menu_item["id"],
                     "message": f"The maximum quantity for {menu_item['name']} is {menu_item['max_quantity']}.",
                 }
@@ -166,6 +186,7 @@ def validate_draft(parsed, catalog, near_match_threshold):
             violations.append(
                 {
                     "code": "invalid_customization",
+                    "line": index,
                     "item_id": menu_item["id"],
                     "message": f"Choose customizations offered for {menu_item['name']}.",
                     "alternatives": offered,
@@ -179,6 +200,7 @@ def validate_draft(parsed, catalog, near_match_threshold):
                 violations.append(
                     {
                         "code": "too_many_customizations",
+                        "line": index,
                         "item_id": menu_item["id"],
                         "message": f"Choose at most {group['max_selections']} option(s) for {group['name']}.",
                         "alternatives": group["options"],
@@ -188,6 +210,7 @@ def validate_draft(parsed, catalog, near_match_threshold):
                 missing_details.append(
                     {
                         "kind": "required_option",
+                        "line": index,
                         "item_id": menu_item["id"],
                         "item_name": menu_item["name"],
                         "group": group["name"],

@@ -10,6 +10,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.msu.campuseats.CartViewModel
 import com.msu.campuseats.data.BackendRepository
+import com.msu.campuseats.data.models.CartItem
+import com.msu.campuseats.data.models.MenuItem
+import com.msu.campuseats.data.remote.AiCart
+import com.msu.campuseats.ui.assistant.AssistantScreen
 import com.msu.campuseats.ui.cart.CartScreen
 import com.msu.campuseats.ui.confirmation.OrderConfirmationScreen
 import com.msu.campuseats.ui.home.HomeScreen
@@ -22,6 +26,7 @@ object AppRoutes {
     const val HOME = "home"
     const val MENU = "menu/{vendorId}"
     const val CART = "cart"
+    const val ASSISTANT = "assistant"
     const val CONFIRMATION = "confirmation/{orderId}/{location}"
 }
 
@@ -34,7 +39,29 @@ fun AppNavGraph(cartViewModel: CartViewModel) {
             HomeScreen(
                 cartViewModel = cartViewModel,
                 onVendorClick = { vendorId -> navController.navigate("menu/$vendorId") },
-                onCartClick = { navController.navigate(AppRoutes.CART) }
+                onCartClick = { navController.navigate(AppRoutes.CART) },
+                onAssistantClick = { navController.navigate(AppRoutes.ASSISTANT) }
+            )
+        }
+
+        composable(AppRoutes.ASSISTANT) {
+            AssistantScreen(
+                onBack = { navController.popBackStack() },
+                onUseTouchMenu = { aiCart ->
+                    // Fallback: carry the assistant's items into the touch cart so the
+                    // customer does not start over, then leave the assistant.
+                    val carried = aiCart?.toTouchCartItems().orEmpty()
+                    if (carried.isEmpty()) {
+                        navController.popBackStack(AppRoutes.HOME, inclusive = false)
+                    } else {
+                        cartViewModel.clearCart()
+                        carried.forEach { cartViewModel.updateQuantity(it.menuItem, it.quantity) }
+                        navController.navigate(AppRoutes.CART) {
+                            popUpTo(AppRoutes.HOME)
+                        }
+                    }
+                },
+                onOrderPlaced = { navController.popBackStack(AppRoutes.HOME, inclusive = false) }
             )
         }
 
@@ -107,4 +134,32 @@ fun AppNavGraph(cartViewModel: CartViewModel) {
             )
         }
     }
+}
+
+/**
+ * The assistant's cart as touch-cart items. The touch cart holds one line per menu
+ * item and no customizations, so duplicate lines are merged and options are dropped.
+ */
+private fun AiCart.toTouchCartItems(): List<CartItem> {
+    val vendor = vendorId ?: return emptyList()
+    return lines
+        .filter { it.menuItemId?.toIntOrNull() != null }
+        .groupBy { it.menuItemId!!.toInt() }
+        .map { (backendId, sameItem) ->
+            val first = sameItem.first()
+            CartItem(
+                menuItem = MenuItem(
+                    id = backendId.toString(),
+                    backendId = backendId,
+                    vendorId = vendor.toString(),
+                    vendorBackendId = vendor,
+                    vendorName = vendorName.orEmpty(),
+                    name = first.name,
+                    description = "",
+                    price = first.unitPrice?.toDoubleOrNull() ?: 0.0,
+                    category = "Menu"
+                ),
+                quantity = sameItem.sumOf { it.quantity }
+            )
+        }
 }

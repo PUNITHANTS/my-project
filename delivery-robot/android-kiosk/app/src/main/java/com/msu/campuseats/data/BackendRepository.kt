@@ -103,33 +103,39 @@ object BackendRepository {
         }.getOrNull()
     }
 
-    suspend fun parseOrderTurn(sessionId: String, transcript: String): AiParseOrderResponse =
+    /** One assistant turn: typed text, a tapped option, or a cart edit. */
+    suspend fun sendAssistantTurn(request: ParseOrderRequest): AiParseOrderResponse =
         withContext(Dispatchers.IO) {
-            api.parseOrderTurn(ParseOrderRequest(sessionId = sessionId, transcript = transcript))
+            api.parseOrderTurn(request)
         }
 
+    /**
+     * Places the cart of a CONFIRM turn. The backend checks it against the live
+     * menu and against the confirmed cart, and rejects the order if either differs.
+     */
     suspend fun placeAiOrder(
         sessionId: String,
-        draft: AiParseOrderResponse,
+        confirmedTurn: AiParseOrderResponse,
         studentName: String,
         phone: String,
         email: String
     ): Int = withContext(Dispatchers.IO) {
-        val vendorId = requireNotNull(draft.vendorId) { "The AI draft has no vendor." }
-        val location = draft.deliveryLocation?.trim().orEmpty()
+        val cart = requireNotNull(confirmedTurn.cart) { "The AI draft has no cart." }
+        val vendorId = requireNotNull(cart.vendorId) { "The AI draft has no vendor." }
+        val location = cart.deliveryLocation?.trim().orEmpty()
         require(location.isNotEmpty()) { "The AI draft has no delivery location." }
-        val token = draft.confirmationToken?.takeIf { it.isNotBlank() }
+        val token = confirmedTurn.confirmationToken?.takeIf { it.isNotBlank() }
             ?: error("The AI draft is not ready for confirmation. Review it again.")
         require(phone.isNotBlank() || email.isNotBlank()) { "Enter a phone number or email." }
-        require(draft.items.isNotEmpty()) { "The AI draft has no items." }
+        require(cart.lines.isNotEmpty()) { "The AI draft has no items." }
 
-        val items = draft.items.map { item ->
+        val items = cart.lines.map { item ->
             val itemId = item.menuItemId?.toIntOrNull()
                 ?: error("A menu item in the draft is no longer valid. Please try again.")
             CreateOrderItemRequest(
                 menuItemId = itemId,
                 quantity = item.quantity,
-                customization = item.customizations.joinToString(", ")
+                customization = item.customization.orEmpty()
             )
         }
 

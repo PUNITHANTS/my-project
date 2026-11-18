@@ -22,15 +22,11 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.msu.campuseats.CartViewModel
-import com.msu.campuseats.ui.components.AiChatBottomSheet
 import com.msu.campuseats.ui.components.AiChatFab
 import com.msu.campuseats.ui.components.CartFab
 import com.msu.campuseats.ui.components.VendorCard
@@ -41,17 +37,16 @@ import com.msu.campuseats.ui.theme.kioskScale
 fun HomeScreen(
     cartViewModel: CartViewModel,
     onVendorClick: (String) -> Unit,
-    onCartClick: () -> Unit
+    onCartClick: () -> Unit,
+    onAssistantClick: () -> Unit
 ) {
     val scale = kioskScale()
     val homeViewModel: HomeViewModel = viewModel()
     val vendors by homeViewModel.vendors.collectAsState()
     val isLoading by homeViewModel.isLoading.collectAsState()
     val error by homeViewModel.error.collectAsState()
-    val vendorNames = remember(vendors) { vendors.associate { it.backendId to it.name } }
     val cartItems by cartViewModel.cartItems.collectAsState()
     val total by cartViewModel.total.collectAsState(0.0)
-    var showAiChat by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -69,7 +64,7 @@ fun HomeScreen(
         },
         floatingActionButton = {
             Column(verticalArrangement = Arrangement.spacedBy((12 * scale).dp)) {
-                AiChatFab(onClick = { showAiChat = true })
+                AiChatFab(onClick = onAssistantClick)
                 CartFab(
                     itemCount = cartItems.sumOf { it.quantity },
                     total = total,
@@ -78,12 +73,6 @@ fun HomeScreen(
             }
         }
     ) { padding ->
-        if (showAiChat) {
-            AiChatBottomSheet(
-                onDismiss = { showAiChat = false },
-                vendorNames = vendorNames
-            )
-        }
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()

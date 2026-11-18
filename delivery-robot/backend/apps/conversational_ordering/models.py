@@ -10,6 +10,16 @@ class AIConversationTurn(models.Model):
         CONFIRM = "CONFIRM", "Confirm"
         ESCALATE = "ESCALATE", "Escalate"
 
+    class InputKind(models.TextChoices):
+        TRANSCRIPT = "transcript", "Typed or spoken text"
+        SELECTED_OPTION = "selected_option", "Tapped option"
+        CART_EDIT = "cart_edit", "Cart edit"
+
+    # The same id the kiosk receives, so one turn can be traced across both.
+    turn_id = models.UUIDField(default=uuid.uuid4, db_index=True)
+    input_kind = models.CharField(
+        max_length=20, choices=InputKind.choices, default=InputKind.TRANSCRIPT
+    )
     session_id = models.UUIDField(default=uuid.uuid4, db_index=True)
     transcript = models.TextField()
     draft_order = models.JSONField(default=dict)
