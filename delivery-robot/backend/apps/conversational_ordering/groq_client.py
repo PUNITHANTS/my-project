@@ -35,7 +35,12 @@ def _post_with_rate_limit_retry(request):
     tries = 8 if settings.AI_EXPERIMENT_MODE else 2
     timeout = 120 if settings.AI_EXPERIMENT_MODE else 20
     for rate_try in range(tries):
-        connection = http.client.HTTPSConnection(parsed.hostname, timeout=timeout)
+        # Plain HTTP is allowed so a local OpenAI-compatible server (Ollama,
+        # llama.cpp) can serve the same open-weight model for experiments.
+        connection_class = (
+            http.client.HTTPConnection if parsed.scheme == "http" else http.client.HTTPSConnection
+        )
+        connection = connection_class(parsed.hostname, parsed.port, timeout=timeout)
         try:
             connection.request("POST", path, body=request.data, headers=headers)
             response = connection.getresponse()
