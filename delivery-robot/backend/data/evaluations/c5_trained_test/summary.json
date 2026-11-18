@@ -1,0 +1,17 @@
+{
+  "C5": {
+    "dialogues": 200,
+    "turns": 328,
+    "exact_order_accuracy": 0.5,
+    "successful_valid_exact_rate": 0.5,
+    "invalid_final_draft_rate": 0.405,
+    "missed_clarification_rate": 0.08444444444444445,
+    "unnecessary_clarification_rate": 0.32038834951456313,
+    "questions_per_dialogue": 1.195,
+    "mean_turns_per_dialogue": 1.64,
+    "mean_turn_latency_ms": 1909.478586582714,
+    "mean_tokens_per_dialogue": 7544.335,
+    "wrong_turns": 225,
+    "correct_turns": 103
+  }
+}

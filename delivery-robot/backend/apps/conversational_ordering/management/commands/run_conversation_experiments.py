@@ -13,6 +13,19 @@ from apps.conversational_ordering.sessions import initial_session
 POLICIES = ("C1", "C2", "C3", "C4", "C5")
 
 
+def _selected_policies(raw):
+    if not raw:
+        return list(POLICIES)
+    selected = []
+    for item in raw.split(","):
+        name = item.strip().upper()
+        if name not in POLICIES:
+            raise CommandError(f"Unknown policy {name!r}. Choose from {', '.join(POLICIES)}.")
+        if name not in selected:
+            selected.append(name)
+    return selected
+
+
 def read_dialogues(path):
     dialogues = []
     seen = set()
@@ -96,14 +109,20 @@ class Command(BaseCommand):
         parser.add_argument("--output-dir", required=True)
         parser.add_argument("--menu-snapshot", help="Frozen catalog JSON produced by export_menu_snapshot")
         parser.add_argument("--max-turns", type=int, default=10)
+        parser.add_argument(
+            "--policies",
+            default="",
+            help="Comma-separated subset of C1-C5. Defaults to all five.",
+        )
 
     def handle(self, *args, **options):
         if options["max_turns"] < 1:
             raise CommandError("--max-turns must be at least 1.")
+        policies = _selected_policies(options["policies"])
         dialogues = read_dialogues(options["input"])
         output_dir = Path(options["output_dir"])
         output_dir.mkdir(parents=True, exist_ok=True)
-        target_files = [output_dir / f"{name.lower()}_features.jsonl" for name in POLICIES]
+        target_files = [output_dir / f"{name.lower()}_features.jsonl" for name in policies]
         target_files.append(output_dir / "summary.json")
         existing = [str(path) for path in target_files if path.exists()]
         if existing:
@@ -129,7 +148,7 @@ class Command(BaseCommand):
                 )
 
         summaries = {}
-        for policy in POLICIES:
+        for policy in policies:
             feature_rows = []
             dialogue_results = []
             turns_seen = []
@@ -152,6 +171,8 @@ class Command(BaseCommand):
 
                 while utterances and dialogue_turn_count < options["max_turns"]:
                     utterance = utterances.pop(0)
+                    self.stdout.write(f"{policy} {dialogue['dialogue_id']} turn {dialogue_turn_count + 1}")
+                    self.stdout.flush()
                     started = time.perf_counter()
                     result, state = parse_customer_turn(
                         session_id,
@@ -218,6 +239,20 @@ class Command(BaseCommand):
                         "invalid": not final_valid,
                     }
                 )
+                with (output_dir / "progress.jsonl").open("a", encoding="utf-8") as progress_file:
+                    progress_file.write(
+                        json.dumps(
+                            {
+                                "policy": policy,
+                                "dialogue_id": dialogue["dialogue_id"],
+                                "category": dialogue["category"],
+                                "exact": exact,
+                                "valid": final_valid,
+                                "turns": dialogue_turn_count,
+                            }
+                        )
+                        + "\n"
+                    )
 
             count = len(dialogue_results)
             summary = {

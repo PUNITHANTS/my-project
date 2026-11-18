@@ -6,11 +6,11 @@ __pycache__/
 *.py[cod]
 .pycache/
 delivery-robot/backend/staticfiles/
-delivery-robot/backend/artifacts/*.joblib
-delivery-robot/backend/data/evaluations/
-delivery-robot/backend/data/splits/
-delivery-robot/backend/data/dialogues*.jsonl
-delivery-robot/backend/data/menu_snapshot*.json
+# Local experiment DB / report authoring helpers (keep shared datasets trackable)
+delivery-robot/backend/experiment.sqlite3
+delivery-robot/backend/data/evaluations/**/figure*.png
+*.docx
+*.pdf
 
 # Frontend dependencies, generated builds, and machine-specific settings
 delivery-robot/vendor-console/node_modules/
