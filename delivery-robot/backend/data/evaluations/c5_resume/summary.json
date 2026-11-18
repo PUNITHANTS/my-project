@@ -1,0 +1,17 @@
+{
+  "C5": {
+    "dialogues": 243,
+    "turns": 300,
+    "exact_order_accuracy": 0.20164609053497942,
+    "successful_valid_exact_rate": 0.20164609053497942,
+    "invalid_final_draft_rate": 0.18106995884773663,
+    "missed_clarification_rate": 0.5697211155378487,
+    "unnecessary_clarification_rate": 0.6938775510204082,
+    "questions_per_dialogue": 0.5843621399176955,
+    "mean_turns_per_dialogue": 1.2345679012345678,
+    "mean_turn_latency_ms": 1717.1190893322153,
+    "mean_tokens_per_dialogue": 5647.279835390947,
+    "wrong_turns": 251,
+    "correct_turns": 49
+  }
+}

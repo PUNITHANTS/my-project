@@ -1,6 +1,9 @@
+import http.client
 import json
+import time
 import urllib.error
 import urllib.request
+from urllib.parse import urlparse
 
 from django.conf import settings
 from pydantic import ValidationError
@@ -21,9 +24,44 @@ must be between 0 and 1. Do not place an order; a person must confirm the final 
 """
 
 
+def _post_with_rate_limit_retry(request):
+    headers = {key: value for key, value in request.header_items()}
+    parsed = urlparse(request.full_url)
+    path = parsed.path or "/"
+    for rate_try in range(8):
+        connection = http.client.HTTPSConnection(parsed.hostname, timeout=120)
+        try:
+            connection.request("POST", path, body=request.data, headers=headers)
+            response = connection.getresponse()
+            payload = response.read()
+            if response.status == 429 and rate_try < 7:
+                retry_after = response.getheader("Retry-After")
+                try:
+                    delay = float(retry_after) if retry_after else 2 ** rate_try
+                except ValueError:
+                    delay = 2 ** rate_try
+                time.sleep(min(max(delay, 1), 20))
+                continue
+            if response.status >= 400:
+                raise urllib.error.HTTPError(
+                    request.full_url, response.status, response.reason, response.headers, None
+                )
+            return json.loads(payload.decode("utf-8"))
+        except urllib.error.HTTPError:
+            raise
+        except (ConnectionResetError, TimeoutError, BrokenPipeError, OSError):
+            if rate_try >= 7:
+                raise
+            time.sleep(min(2 ** rate_try, 20))
+            continue
+        finally:
+            connection.close()
+    raise AIProviderError("The model provider rate or quota limit was reached (HTTP 429). Wait and retry.")
+
+
 def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
-    if not settings.GROQ_API_KEY:
-        raise AIProviderError("The backend is missing GROQ_API_KEY.")
+    if not settings.LLM_API_KEY:
+        raise AIProviderError("The backend is missing an LLM API key.")
     if not settings.GROQ_MODEL or settings.GROQ_MODEL == "your-active-groq-model-id":
         raise AIProviderError("Set GROQ_MODEL to an active model in the backend environment.")
 
@@ -57,6 +95,8 @@ def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
             {"role": "user", "content": json.dumps(payload_for_model)},
         ],
     }
+    if "gpt-oss" in settings.GROQ_MODEL:
+        request_body["reasoning_effort"] = "low"
 
     total_usage = {"prompt_tokens": 0, "completion_tokens": 0}
     for attempt in range(2):
@@ -69,18 +109,17 @@ def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
                 }
             ]
         request = urllib.request.Request(
-            "https://api.groq.com/openai/v1/chat/completions",
+            settings.LLM_API_BASE,
             data=json.dumps(body).encode("utf-8"),
             headers={
-                "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                "Authorization": f"Bearer {settings.LLM_API_KEY}",
                 "Content-Type": "application/json",
                 "User-Agent": "campus-delivery-ordering/1.0",
             },
             method="POST",
         )
         try:
-            with urllib.request.urlopen(request, timeout=35) as response:
-                result = json.loads(response.read().decode("utf-8"))
+            result = _post_with_rate_limit_retry(request)
             usage = result.get("usage") or {}
             total_usage["prompt_tokens"] += int(usage.get("prompt_tokens", 0))
             total_usage["completion_tokens"] += int(usage.get("completion_tokens", 0))
@@ -93,18 +132,18 @@ def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
         except urllib.error.HTTPError as exc:
             if exc.code in (400, 404, 422):
                 raise AIProviderError(
-                    "Groq rejected the model or request configuration. Check GROQ_MODEL and JSON mode support."
+                    "The model provider rejected the request configuration. Check the model id and JSON mode support."
                 ) from exc
             if exc.code == 401:
-                message = "Groq rejected GROQ_API_KEY (HTTP 401). Check that the backend key is active."
+                message = "The model provider rejected the API key (HTTP 401)."
             elif exc.code == 403:
-                message = "Groq denied this request (HTTP 403). Check API access or network proxy settings."
+                message = "The model provider denied this request (HTTP 403)."
             elif exc.code == 429:
-                message = "Groq rate or quota limit reached (HTTP 429). Wait and check account limits."
+                message = "The model provider rate or quota limit was reached (HTTP 429)."
             elif exc.code >= 500:
-                message = f"Groq is temporarily unavailable (HTTP {exc.code}). Try again shortly."
+                message = f"The model provider is temporarily unavailable (HTTP {exc.code})."
             else:
-                message = f"Groq rejected the request (HTTP {exc.code}). Check account access."
+                message = f"The model provider rejected the request (HTTP {exc.code})."
             raise AIProviderError(message) from exc
         except (
             KeyError,
@@ -115,9 +154,9 @@ def interpret_turn(transcript, menu, current_draft, messages, temperature=0):
             raise AIProviderError("The AI provider is unavailable or returned an unreadable response.") from exc
         except urllib.error.URLError as exc:
             raise AIProviderError(
-                "The backend could not reach Groq. Check outbound HTTPS, DNS, or proxy settings."
+                "The backend could not reach the model provider. Check outbound HTTPS, DNS, or proxy settings."
             ) from exc
         except TimeoutError as exc:
-            raise AIProviderError("Groq did not respond before the request timed out.") from exc
+            raise AIProviderError("The model provider did not respond before the request timed out.") from exc
 
     return None
