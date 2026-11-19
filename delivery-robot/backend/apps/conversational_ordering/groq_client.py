@@ -1,6 +1,7 @@
 import hashlib
 import http.client
 import json
+import logging
 import time
 import urllib.error
 import urllib.request
@@ -11,6 +12,8 @@ from django.conf import settings
 from pydantic import ValidationError
 
 from .schemas import ParsedOrder
+
+logger = logging.getLogger(__name__)
 
 
 class AIProviderError(Exception):
@@ -30,6 +33,7 @@ def _post_with_rate_limit_retry(request):
     headers = {key: value for key, value in request.header_items()}
     parsed = urlparse(request.full_url)
     path = parsed.path or "/"
+    data = request.data
     # Offline experiments wait out rate limits; a kiosk customer cannot, so live
     # requests retry once and give up quickly (the kiosk then offers the menu).
     tries = 8 if settings.AI_EXPERIMENT_MODE else 2
@@ -42,7 +46,7 @@ def _post_with_rate_limit_retry(request):
         )
         connection = connection_class(parsed.hostname, parsed.port, timeout=timeout)
         try:
-            connection.request("POST", path, body=request.data, headers=headers)
+            connection.request("POST", path, body=data, headers=headers)
             response = connection.getresponse()
             payload = response.read()
             if response.status == 429 and rate_try < tries - 1:
@@ -52,6 +56,21 @@ def _post_with_rate_limit_retry(request):
                 except ValueError:
                     delay = 2 ** rate_try
                 time.sleep(min(max(delay, 1), 20))
+                continue
+            if response.status >= 500 and settings.AI_EXPERIMENT_MODE and rate_try < tries - 1:
+                # Ollama returns 500 "token repeat limit reached" when greedy
+                # (temperature 0) decoding loops; the same request loops again on
+                # every retry. Retry with a small seeded temperature so the run
+                # continues and stays reproducible. Live requests never do this.
+                logger.warning(
+                    "Model server returned %s (%s); retrying with seeded temperature.",
+                    response.status,
+                    payload[:200].decode("utf-8", "replace"),
+                )
+                body = json.loads(data.decode("utf-8"))
+                body.update({"temperature": 0.3, "seed": rate_try + 1})
+                data = json.dumps(body).encode("utf-8")
+                time.sleep(1)
                 continue
             if response.status >= 400:
                 raise urllib.error.HTTPError(

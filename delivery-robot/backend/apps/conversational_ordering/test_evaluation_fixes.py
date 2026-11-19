@@ -233,3 +233,54 @@ class ExperimentRunnerTests(SimpleTestCase):
         self.assertEqual([row["label_valid"] for row in rows], [False, True])
         self.assertEqual(summary["wrong_turns"] + summary["correct_turns"], 1)
         self.assertEqual(len(trace), 2)
+
+
+class LocalServerRetryTests(SimpleTestCase):
+    @override_settings(AI_EXPERIMENT_MODE=True)
+    def test_repeat_limit_error_is_retried_with_a_seeded_temperature(self):
+        # Ollama answers 500 "token repeat limit reached" when greedy decoding loops.
+        import urllib.request
+
+        from . import groq_client
+
+        sent = []
+
+        class Response:
+            def __init__(self, status, payload):
+                self.status, self._payload, self.reason, self.headers = status, payload, "", {}
+
+            def read(self):
+                return self._payload
+
+            def getheader(self, name):
+                return None
+
+        replies = iter([
+            Response(500, b'{"error":{"message":"prediction aborted, token repeat limit reached"}}'),
+            Response(200, b'{"ok": true}'),
+        ])
+
+        class Connection:
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def request(self, method, path, body=None, headers=None):
+                sent.append(json.loads(body))
+
+            def getresponse(self):
+                return next(replies)
+
+            def close(self):
+                pass
+
+        request = urllib.request.Request(
+            "http://localhost:11434/v1/chat/completions",
+            data=json.dumps({"model": "m", "temperature": 0}).encode(),
+            headers={"Content-Type": "application/json"},
+        )
+        with mock.patch.object(groq_client.http.client, "HTTPConnection", Connection), \
+                mock.patch.object(groq_client.time, "sleep"):
+            result = groq_client._post_with_rate_limit_retry(request)
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(sent[0]["temperature"], 0)
+        self.assertEqual((sent[1]["temperature"], sent[1]["seed"]), (0.3, 1))
