@@ -1,0 +1,35 @@
+{
+  "C1": {
+    "turns": 452,
+    "missed_clarification_rate": 0.9569377990430622,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.03
+  },
+  "C2": {
+    "turns": 452,
+    "missed_clarification_rate": 0.4019138755980861,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.4166666666666667
+  },
+  "C3": {
+    "turns": 452,
+    "missed_clarification_rate": 0.08133971291866028,
+    "unnecessary_clarification_rate": 0.3168724279835391,
+    "questions_per_dialogue": 0.8966666666666666
+  },
+  "C4": {
+    "turns": 452,
+    "missed_clarification_rate": 0.10047846889952153,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.6266666666666667
+  },
+  "C5": {
+    "turns": 452,
+    "missed_clarification_rate": 0.019138755980861243,
+    "unnecessary_clarification_rate": 0.8724279835390947,
+    "questions_per_dialogue": 1.39,
+    "brier_score": 0.20912628045882706,
+    "expected_calibration_error": 0.10084833075871899,
+    "auroc": 0.6248449406344143
+  }
+}

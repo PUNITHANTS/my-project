@@ -1,0 +1,55 @@
+{
+  "C2": {
+    "dialogues": 603,
+    "turns": 1046,
+    "exact_order_accuracy": 0.8474295190713101,
+    "successful_valid_exact_rate": 0.8474295190713101,
+    "invalid_final_draft_rate": 0.03316749585406302,
+    "missed_clarification_rate": 0.17543859649122806,
+    "unnecessary_clarification_rate": 0.007797270955165692,
+    "questions_per_dialogue": 0.5538971807628524,
+    "mean_turns_per_dialogue": 1.734660033167496,
+    "mean_turn_latency_ms": 5129.905611759309,
+    "mean_tokens_per_dialogue": 2167.427860696517,
+    "wrong_turns": 399,
+    "correct_turns": 513,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 67,
+        "exact_order_accuracy": 0.746268656716418
+      },
+      "clear_request": {
+        "n": 67,
+        "exact_order_accuracy": 1.0
+      },
+      "correction": {
+        "n": 67,
+        "exact_order_accuracy": 0.9402985074626866
+      },
+      "customization": {
+        "n": 67,
+        "exact_order_accuracy": 0.9253731343283582
+      },
+      "multi_item": {
+        "n": 67,
+        "exact_order_accuracy": 0.9850746268656716
+      },
+      "multi_problem": {
+        "n": 67,
+        "exact_order_accuracy": 0.5373134328358209
+      },
+      "quantity_limit": {
+        "n": 67,
+        "exact_order_accuracy": 0.9850746268656716
+      },
+      "removal": {
+        "n": 67,
+        "exact_order_accuracy": 0.6119402985074627
+      },
+      "unavailable_option": {
+        "n": 67,
+        "exact_order_accuracy": 0.8955223880597015
+      }
+    }
+  }
+}

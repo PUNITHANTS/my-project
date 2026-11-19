@@ -1,0 +1,107 @@
+{
+  "C1": {
+    "dialogues": 300,
+    "turns": 309,
+    "exact_order_accuracy": 0.42,
+    "successful_valid_exact_rate": 0.42,
+    "invalid_final_draft_rate": 0.5633333333333334,
+    "missed_clarification_rate": 0.9508196721311475,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.03,
+    "mean_turns_per_dialogue": 1.03,
+    "mean_turn_latency_ms": 5608.980625244137,
+    "mean_tokens_per_dialogue": 1408.8533333333332,
+    "wrong_turns": 183,
+    "correct_turns": 126,
+    "by_category": {
+      "pizza_human": {
+        "n": 300,
+        "exact_order_accuracy": 0.42
+      }
+    }
+  },
+  "C2": {
+    "dialogues": 300,
+    "turns": 452,
+    "exact_order_accuracy": 0.81,
+    "successful_valid_exact_rate": 0.81,
+    "invalid_final_draft_rate": 0.12,
+    "missed_clarification_rate": 0.10047846889952153,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.6266666666666667,
+    "mean_turns_per_dialogue": 1.5066666666666666,
+    "mean_turn_latency_ms": 1581.1146165917019,
+    "mean_tokens_per_dialogue": 2076.1133333333332,
+    "wrong_turns": 209,
+    "correct_turns": 243,
+    "by_category": {
+      "pizza_human": {
+        "n": 300,
+        "exact_order_accuracy": 0.81
+      }
+    }
+  },
+  "C3": {
+    "dialogues": 300,
+    "turns": 452,
+    "exact_order_accuracy": 0.81,
+    "successful_valid_exact_rate": 0.81,
+    "invalid_final_draft_rate": 0.12,
+    "missed_clarification_rate": 0.08133971291866028,
+    "unnecessary_clarification_rate": 0.3168724279835391,
+    "questions_per_dialogue": 0.8966666666666666,
+    "mean_turns_per_dialogue": 1.5066666666666666,
+    "mean_turn_latency_ms": 2.8149256604029262,
+    "mean_tokens_per_dialogue": 2076.1133333333332,
+    "wrong_turns": 209,
+    "correct_turns": 243,
+    "by_category": {
+      "pizza_human": {
+        "n": 300,
+        "exact_order_accuracy": 0.81
+      }
+    }
+  },
+  "C4": {
+    "dialogues": 300,
+    "turns": 452,
+    "exact_order_accuracy": 0.81,
+    "successful_valid_exact_rate": 0.81,
+    "invalid_final_draft_rate": 0.12,
+    "missed_clarification_rate": 0.10047846889952153,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.6266666666666667,
+    "mean_turns_per_dialogue": 1.5066666666666666,
+    "mean_turn_latency_ms": 0.9179402646800272,
+    "mean_tokens_per_dialogue": 2076.1133333333332,
+    "wrong_turns": 209,
+    "correct_turns": 243,
+    "by_category": {
+      "pizza_human": {
+        "n": 300,
+        "exact_order_accuracy": 0.81
+      }
+    }
+  },
+  "C5": {
+    "dialogues": 300,
+    "turns": 452,
+    "exact_order_accuracy": 0.81,
+    "successful_valid_exact_rate": 0.81,
+    "invalid_final_draft_rate": 0.12,
+    "missed_clarification_rate": 0.019138755980861243,
+    "unnecessary_clarification_rate": 0.8724279835390947,
+    "questions_per_dialogue": 1.39,
+    "mean_turns_per_dialogue": 1.5066666666666666,
+    "mean_turn_latency_ms": 5.972582743084883,
+    "mean_tokens_per_dialogue": 2076.1133333333332,
+    "wrong_turns": 209,
+    "correct_turns": 243,
+    "by_category": {
+      "pizza_human": {
+        "n": 300,
+        "exact_order_accuracy": 0.81
+      }
+    }
+  }
+}

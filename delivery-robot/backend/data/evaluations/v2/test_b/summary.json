@@ -1,0 +1,287 @@
+{
+  "C1": {
+    "dialogues": 200,
+    "turns": 264,
+    "exact_order_accuracy": 0.275,
+    "successful_valid_exact_rate": 0.275,
+    "invalid_final_draft_rate": 0.575,
+    "missed_clarification_rate": 0.8571428571428571,
+    "unnecessary_clarification_rate": 0.017857142857142856,
+    "questions_per_dialogue": 0.125,
+    "mean_turns_per_dialogue": 1.32,
+    "mean_turn_latency_ms": 5318.495711743184,
+    "mean_tokens_per_dialogue": 1812.575,
+    "wrong_turns": 168,
+    "correct_turns": 56,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.2
+      },
+      "clear_request": {
+        "n": 20,
+        "exact_order_accuracy": 0.9
+      },
+      "correction": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "customization": {
+        "n": 20,
+        "exact_order_accuracy": 0.05
+      },
+      "multi_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.75
+      },
+      "multi_problem": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "partial_answer": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "quantity_limit": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "removal": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "unavailable_option": {
+        "n": 20,
+        "exact_order_accuracy": 0.2
+      }
+    }
+  },
+  "C2": {
+    "dialogues": 200,
+    "turns": 378,
+    "exact_order_accuracy": 0.65,
+    "successful_valid_exact_rate": 0.65,
+    "invalid_final_draft_rate": 0.18,
+    "missed_clarification_rate": 0.15942028985507245,
+    "unnecessary_clarification_rate": 0.007633587786259542,
+    "questions_per_dialogue": 0.9,
+    "mean_turns_per_dialogue": 1.89,
+    "mean_turn_latency_ms": 2031.8608280442527,
+    "mean_tokens_per_dialogue": 2672.345,
+    "wrong_turns": 207,
+    "correct_turns": 131,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.75
+      },
+      "clear_request": {
+        "n": 20,
+        "exact_order_accuracy": 0.9
+      },
+      "correction": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "customization": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "multi_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.75
+      },
+      "multi_problem": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "partial_answer": {
+        "n": 20,
+        "exact_order_accuracy": 0.3
+      },
+      "quantity_limit": {
+        "n": 20,
+        "exact_order_accuracy": 1.0
+      },
+      "removal": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "unavailable_option": {
+        "n": 20,
+        "exact_order_accuracy": 0.85
+      }
+    }
+  },
+  "C3": {
+    "dialogues": 200,
+    "turns": 378,
+    "exact_order_accuracy": 0.655,
+    "successful_valid_exact_rate": 0.655,
+    "invalid_final_draft_rate": 0.18,
+    "missed_clarification_rate": 0.15048543689320387,
+    "unnecessary_clarification_rate": 0.045454545454545456,
+    "questions_per_dialogue": 0.93,
+    "mean_turns_per_dialogue": 1.89,
+    "mean_turn_latency_ms": 26.59426375677829,
+    "mean_tokens_per_dialogue": 2672.18,
+    "wrong_turns": 206,
+    "correct_turns": 132,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.8
+      },
+      "clear_request": {
+        "n": 20,
+        "exact_order_accuracy": 0.9
+      },
+      "correction": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "customization": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "multi_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.75
+      },
+      "multi_problem": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "partial_answer": {
+        "n": 20,
+        "exact_order_accuracy": 0.3
+      },
+      "quantity_limit": {
+        "n": 20,
+        "exact_order_accuracy": 1.0
+      },
+      "removal": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "unavailable_option": {
+        "n": 20,
+        "exact_order_accuracy": 0.85
+      }
+    }
+  },
+  "C4": {
+    "dialogues": 200,
+    "turns": 378,
+    "exact_order_accuracy": 0.65,
+    "successful_valid_exact_rate": 0.65,
+    "invalid_final_draft_rate": 0.18,
+    "missed_clarification_rate": 0.15942028985507245,
+    "unnecessary_clarification_rate": 0.007633587786259542,
+    "questions_per_dialogue": 0.905,
+    "mean_turns_per_dialogue": 1.89,
+    "mean_turn_latency_ms": 12.59815264628737,
+    "mean_tokens_per_dialogue": 2672.09,
+    "wrong_turns": 207,
+    "correct_turns": 131,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.75
+      },
+      "clear_request": {
+        "n": 20,
+        "exact_order_accuracy": 0.9
+      },
+      "correction": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "customization": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "multi_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.75
+      },
+      "multi_problem": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "partial_answer": {
+        "n": 20,
+        "exact_order_accuracy": 0.3
+      },
+      "quantity_limit": {
+        "n": 20,
+        "exact_order_accuracy": 1.0
+      },
+      "removal": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "unavailable_option": {
+        "n": 20,
+        "exact_order_accuracy": 0.85
+      }
+    }
+  },
+  "C5": {
+    "dialogues": 200,
+    "turns": 382,
+    "exact_order_accuracy": 0.66,
+    "successful_valid_exact_rate": 0.66,
+    "invalid_final_draft_rate": 0.18,
+    "missed_clarification_rate": 0.014563106796116505,
+    "unnecessary_clarification_rate": 0.9705882352941176,
+    "questions_per_dialogue": 1.875,
+    "mean_turns_per_dialogue": 1.91,
+    "mean_turn_latency_ms": 442.1742264411768,
+    "mean_tokens_per_dialogue": 2699.83,
+    "wrong_turns": 206,
+    "correct_turns": 136,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.8
+      },
+      "clear_request": {
+        "n": 20,
+        "exact_order_accuracy": 0.9
+      },
+      "correction": {
+        "n": 20,
+        "exact_order_accuracy": 0.7
+      },
+      "customization": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "multi_item": {
+        "n": 20,
+        "exact_order_accuracy": 0.75
+      },
+      "multi_problem": {
+        "n": 20,
+        "exact_order_accuracy": 0.65
+      },
+      "partial_answer": {
+        "n": 20,
+        "exact_order_accuracy": 0.3
+      },
+      "quantity_limit": {
+        "n": 20,
+        "exact_order_accuracy": 1.0
+      },
+      "removal": {
+        "n": 20,
+        "exact_order_accuracy": 0.0
+      },
+      "unavailable_option": {
+        "n": 20,
+        "exact_order_accuracy": 0.85
+      }
+    }
+  }
+}
