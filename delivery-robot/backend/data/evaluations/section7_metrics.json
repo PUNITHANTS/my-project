@@ -1,0 +1,562 @@
+{
+ "v1_fixed": {
+  "C1": {
+   "exact": 0.465,
+   "f1": 0.5353982300884956,
+   "completion": 0.995,
+   "invalid_raw": 0.5103448275862069,
+   "invalid_confirm": 0.4100418410041841,
+   "missed": 0.5376884422110553,
+   "unnecessary": 0.0196078431372549,
+   "questions": 0.255,
+   "turns": 1.45,
+   "latency": 7859.539411036129,
+   "tokens": 1745.075,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.275,
+    "clear_request": 0.85,
+    "correction": 0.825,
+    "customization": 0.175,
+    "unavailable_option": 0.2
+   }
+  },
+  "C2": {
+   "exact": 0.765,
+   "f1": 0.7648456057007126,
+   "completion": 0.835,
+   "invalid_raw": 0.3933933933933934,
+   "invalid_confirm": 0.0,
+   "missed": 0.08383233532934131,
+   "unnecessary": 0.0,
+   "questions": 0.655,
+   "turns": 1.665,
+   "latency": 5268.927398799183,
+   "tokens": 2011.77,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.6,
+    "clear_request": 0.85,
+    "correction": 0.825,
+    "customization": 0.725,
+    "unavailable_option": 0.825
+   }
+  },
+  "C3": {
+   "exact": 0.8,
+   "f1": 0.7980997624703088,
+   "completion": 0.815,
+   "invalid_raw": 0.3819241982507289,
+   "invalid_confirm": 0.0,
+   "missed": 0.04294478527607362,
+   "unnecessary": 0.05,
+   "questions": 0.725,
+   "turns": 1.715,
+   "latency": 625.1377801778427,
+   "tokens": 2074.13,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.775,
+    "clear_request": 0.85,
+    "correction": 0.825,
+    "customization": 0.725,
+    "unavailable_option": 0.825
+   }
+  },
+  "C4": {
+   "exact": 0.775,
+   "f1": 0.7743467933491687,
+   "completion": 0.815,
+   "invalid_raw": 0.39104477611940297,
+   "invalid_confirm": 0.0,
+   "missed": 0.0736196319018405,
+   "unnecessary": 0.030303030303030304,
+   "questions": 0.685,
+   "turns": 1.675,
+   "latency": 0.6305537315141132,
+   "tokens": 2024.29,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.65,
+    "clear_request": 0.85,
+    "correction": 0.825,
+    "customization": 0.725,
+    "unavailable_option": 0.825
+   }
+  },
+  "C5": {
+   "exact": 0.795,
+   "f1": 0.7933491686460807,
+   "completion": 0.745,
+   "invalid_raw": 0.3808139534883721,
+   "invalid_confirm": 0.0,
+   "missed": 0.006711409395973154,
+   "unnecessary": 0.1032258064516129,
+   "questions": 0.8,
+   "turns": 1.72,
+   "latency": 154.86923866207457,
+   "tokens": 2080.455,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.75,
+    "clear_request": 0.85,
+    "correction": 0.825,
+    "customization": 0.725,
+    "unavailable_option": 0.825
+   }
+  }
+ },
+ "v1_canon": {
+  "C1": {
+   "exact": 0.585,
+   "f1": 0.6933333333333334,
+   "completion": 0.995,
+   "invalid_raw": 0.42758620689655175,
+   "invalid_confirm": 0.30962343096234307,
+   "missed": 0.41708542713567837,
+   "unnecessary": 0.0196078431372549,
+   "questions": 0.255,
+   "turns": 1.45,
+   "latency": 74.98393068913018,
+   "tokens": 1745.265,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.375,
+    "clear_request": 1.0,
+    "correction": 1.0,
+    "customization": 0.35,
+    "unavailable_option": 0.2
+   }
+  },
+  "C2": {
+   "exact": 0.955,
+   "f1": 0.954653937947494,
+   "completion": 1.0,
+   "invalid_raw": 0.27927927927927926,
+   "invalid_confirm": 0.0,
+   "missed": 0.045,
+   "unnecessary": 0.0,
+   "questions": 0.465,
+   "turns": 1.665,
+   "latency": 0.772461862696262,
+   "tokens": 2011.555,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.825,
+    "clear_request": 1.0,
+    "correction": 1.0,
+    "customization": 0.95,
+    "unavailable_option": 1.0
+   }
+  },
+  "C3": {
+   "exact": 0.99,
+   "f1": 0.9880668257756563,
+   "completion": 0.98,
+   "invalid_raw": 0.27113702623906705,
+   "invalid_confirm": 0.0,
+   "missed": 0.01020408163265306,
+   "unnecessary": 0.06542056074766354,
+   "questions": 0.535,
+   "turns": 1.715,
+   "latency": 0.6348314866798308,
+   "tokens": 2073.915,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 1.0,
+    "clear_request": 1.0,
+    "correction": 1.0,
+    "customization": 0.95,
+    "unavailable_option": 1.0
+   }
+  },
+  "C4": {
+   "exact": 0.965,
+   "f1": 0.964200477326969,
+   "completion": 0.97,
+   "invalid_raw": 0.27761194029850744,
+   "invalid_confirm": 0.0,
+   "missed": 0.03608247422680412,
+   "unnecessary": 0.0594059405940594,
+   "questions": 0.505,
+   "turns": 1.675,
+   "latency": 0.5824373117578563,
+   "tokens": 2024.075,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.875,
+    "clear_request": 1.0,
+    "correction": 1.0,
+    "customization": 0.95,
+    "unavailable_option": 1.0
+   }
+  },
+  "C5": {
+   "exact": 0.985,
+   "f1": 0.9832935560859188,
+   "completion": 0.95,
+   "invalid_raw": 0.2719298245614035,
+   "invalid_confirm": 0.0,
+   "missed": 0.015789473684210527,
+   "unnecessary": 0.11607142857142858,
+   "questions": 0.56,
+   "turns": 1.71,
+   "latency": 6.766161987420487,
+   "tokens": 2067.65,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.975,
+    "clear_request": 1.0,
+    "correction": 1.0,
+    "customization": 0.95,
+    "unavailable_option": 1.0
+   }
+  }
+ },
+ "v2_a": {
+  "C1": {
+   "exact": 0.37373737373737376,
+   "f1": 0.5888689407540395,
+   "completion": 0.98989898989899,
+   "invalid_raw": 0.4568345323741007,
+   "invalid_confirm": 0.38333333333333336,
+   "missed": 0.6224489795918368,
+   "unnecessary": 0.02631578947368421,
+   "questions": 0.1919191919191919,
+   "turns": 1.404040404040404,
+   "latency": 5258.342608632964,
+   "tokens": 1742.540404040404,
+   "n": 198,
+   "by_category": {
+    "ambiguous_item": 0.2727272727272727,
+    "clear_request": 0.9090909090909091,
+    "correction": 0.8181818181818182,
+    "customization": 0.18181818181818182,
+    "multi_item": 0.9545454545454546,
+    "multi_problem": 0.09090909090909091,
+    "quantity_limit": 0.0,
+    "removal": 0.0,
+    "unavailable_option": 0.13636363636363635
+   }
+  },
+  "C2": {
+   "exact": 0.7626262626262627,
+   "f1": 0.8901303538175046,
+   "completion": 0.9242424242424242,
+   "invalid_raw": 0.33236994219653176,
+   "invalid_confirm": 0.0,
+   "missed": 0.18032786885245902,
+   "unnecessary": 0.01680672268907563,
+   "questions": 0.6060606060606061,
+   "turns": 1.7474747474747474,
+   "latency": 1353.4580199443265,
+   "tokens": 2172.479797979798,
+   "n": 198,
+   "by_category": {
+    "ambiguous_item": 0.8636363636363636,
+    "clear_request": 0.9090909090909091,
+    "correction": 0.8181818181818182,
+    "customization": 0.6818181818181818,
+    "multi_item": 0.9545454545454546,
+    "multi_problem": 0.7272727272727273,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.9090909090909091
+   }
+  },
+  "C3": {
+   "exact": 0.7727272727272727,
+   "f1": 0.8975791433891993,
+   "completion": 0.8787878787878788,
+   "invalid_raw": 0.32670454545454547,
+   "invalid_confirm": 0.0,
+   "missed": 0.1724137931034483,
+   "unnecessary": 0.09701492537313433,
+   "questions": 0.6868686868686869,
+   "turns": 1.7777777777777777,
+   "latency": 92.55546619219372,
+   "tokens": 2210.813131313131,
+   "n": 198,
+   "by_category": {
+    "ambiguous_item": 0.9545454545454546,
+    "clear_request": 0.9090909090909091,
+    "correction": 0.8181818181818182,
+    "customization": 0.6818181818181818,
+    "multi_item": 0.9545454545454546,
+    "multi_problem": 0.7272727272727273,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.9090909090909091
+   }
+  },
+  "C4": {
+   "exact": 0.7626262626262627,
+   "f1": 0.8901303538175046,
+   "completion": 0.9393939393939394,
+   "invalid_raw": 0.33236994219653176,
+   "invalid_confirm": 0.0,
+   "missed": 0.1935483870967742,
+   "unnecessary": 0.017241379310344827,
+   "questions": 0.5909090909090909,
+   "turns": 1.7474747474747474,
+   "latency": 0.722867919527791,
+   "tokens": 2172.479797979798,
+   "n": 198,
+   "by_category": {
+    "ambiguous_item": 0.8636363636363636,
+    "clear_request": 0.9090909090909091,
+    "correction": 0.8181818181818182,
+    "customization": 0.6818181818181818,
+    "multi_item": 0.9545454545454546,
+    "multi_problem": 0.7272727272727273,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.9090909090909091
+   }
+  },
+  "C5": {
+   "exact": 0.7727272727272727,
+   "f1": 0.8975791433891993,
+   "completion": 0.0,
+   "invalid_raw": 0.32577903682719545,
+   "invalid_confirm": null,
+   "missed": null,
+   "unnecessary": 0.511326860841424,
+   "questions": 1.7828282828282829,
+   "turns": 1.7828282828282829,
+   "latency": 572.6486144486153,
+   "tokens": 2217.621212121212,
+   "n": 198,
+   "by_category": {
+    "ambiguous_item": 0.9545454545454546,
+    "clear_request": 0.9090909090909091,
+    "correction": 0.8181818181818182,
+    "customization": 0.6818181818181818,
+    "multi_item": 0.9545454545454546,
+    "multi_problem": 0.7272727272727273,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.9090909090909091
+   }
+  }
+ },
+ "v2_b": {
+  "C1": {
+   "exact": 0.275,
+   "f1": 0.5186567164179104,
+   "completion": 0.995,
+   "invalid_raw": 0.5340909090909091,
+   "invalid_confirm": 0.502092050209205,
+   "missed": 0.7236180904522613,
+   "unnecessary": 0.04,
+   "questions": 0.125,
+   "turns": 1.32,
+   "latency": 5318.495711743184,
+   "tokens": 1812.575,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.2,
+    "clear_request": 0.9,
+    "correction": 0.65,
+    "customization": 0.05,
+    "multi_item": 0.75,
+    "multi_problem": 0.0,
+    "partial_answer": 0.0,
+    "quantity_limit": 0.0,
+    "removal": 0.0,
+    "unavailable_option": 0.2
+   }
+  },
+  "C2": {
+   "exact": 0.65,
+   "f1": 0.8754716981132076,
+   "completion": 0.815,
+   "invalid_raw": 0.4656084656084656,
+   "invalid_confirm": 0.0,
+   "missed": 0.20245398773006135,
+   "unnecessary": 0.005714285714285714,
+   "questions": 0.9,
+   "turns": 1.89,
+   "latency": 2031.8608280442527,
+   "tokens": 2672.345,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.75,
+    "clear_request": 0.9,
+    "correction": 0.65,
+    "customization": 0.65,
+    "multi_item": 0.75,
+    "multi_problem": 0.65,
+    "partial_answer": 0.3,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.85
+   }
+  },
+  "C3": {
+   "exact": 0.655,
+   "f1": 0.879245283018868,
+   "completion": 0.785,
+   "invalid_raw": 0.4656084656084656,
+   "invalid_confirm": 0.0,
+   "missed": 0.19745222929936307,
+   "unnecessary": 0.03314917127071823,
+   "questions": 0.93,
+   "turns": 1.89,
+   "latency": 26.59426375677829,
+   "tokens": 2672.18,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.8,
+    "clear_request": 0.9,
+    "correction": 0.65,
+    "customization": 0.65,
+    "multi_item": 0.75,
+    "multi_problem": 0.65,
+    "partial_answer": 0.3,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.85
+   }
+  },
+  "C4": {
+   "exact": 0.65,
+   "f1": 0.8754716981132076,
+   "completion": 0.815,
+   "invalid_raw": 0.4656084656084656,
+   "invalid_confirm": 0.0,
+   "missed": 0.20245398773006135,
+   "unnecessary": 0.005714285714285714,
+   "questions": 0.905,
+   "turns": 1.89,
+   "latency": 12.59815264628737,
+   "tokens": 2672.09,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.75,
+    "clear_request": 0.9,
+    "correction": 0.65,
+    "customization": 0.65,
+    "multi_item": 0.75,
+    "multi_problem": 0.65,
+    "partial_answer": 0.3,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.85
+   }
+  },
+  "C5": {
+   "exact": 0.66,
+   "f1": 0.8846880907372401,
+   "completion": 0.035,
+   "invalid_raw": 0.4607329842931937,
+   "invalid_confirm": 0.0,
+   "missed": 0.42857142857142855,
+   "unnecessary": 0.3940298507462687,
+   "questions": 1.875,
+   "turns": 1.91,
+   "latency": 442.1742264411768,
+   "tokens": 2699.83,
+   "n": 200,
+   "by_category": {
+    "ambiguous_item": 0.8,
+    "clear_request": 0.9,
+    "correction": 0.7,
+    "customization": 0.65,
+    "multi_item": 0.75,
+    "multi_problem": 0.65,
+    "partial_answer": 0.3,
+    "quantity_limit": 1.0,
+    "removal": 0.0,
+    "unavailable_option": 0.85
+   }
+  }
+ },
+ "pizza": {
+  "C1": {
+   "exact": 0.42,
+   "f1": 0.661608497723824,
+   "completion": 1.0,
+   "invalid_raw": 0.5760517799352751,
+   "invalid_confirm": 0.5633333333333334,
+   "missed": 0.58,
+   "unnecessary": 0.0,
+   "questions": 0.03,
+   "turns": 1.03,
+   "latency": 5608.980625244137,
+   "tokens": 1408.8533333333332,
+   "n": 300,
+   "by_category": {
+    "pizza_human": 0.42
+   }
+  },
+  "C2": {
+   "exact": 0.81,
+   "f1": 0.8292682926829268,
+   "completion": 0.88,
+   "invalid_raw": 0.415929203539823,
+   "invalid_confirm": 0.0,
+   "missed": 0.07954545454545454,
+   "unnecessary": 0.0,
+   "questions": 0.6266666666666667,
+   "turns": 1.5066666666666666,
+   "latency": 1581.1146165917019,
+   "tokens": 2076.1133333333332,
+   "n": 300,
+   "by_category": {
+    "pizza_human": 0.81
+   }
+  },
+  "C3": {
+   "exact": 0.81,
+   "f1": 0.8292682926829268,
+   "completion": 0.61,
+   "invalid_raw": 0.415929203539823,
+   "invalid_confirm": 0.0,
+   "missed": 0.09289617486338798,
+   "unnecessary": 0.2862453531598513,
+   "questions": 0.8966666666666666,
+   "turns": 1.5066666666666666,
+   "latency": 2.8149256604029262,
+   "tokens": 2076.1133333333332,
+   "n": 300,
+   "by_category": {
+    "pizza_human": 0.81
+   }
+  },
+  "C4": {
+   "exact": 0.81,
+   "f1": 0.8292682926829268,
+   "completion": 0.88,
+   "invalid_raw": 0.415929203539823,
+   "invalid_confirm": 0.0,
+   "missed": 0.07954545454545454,
+   "unnecessary": 0.0,
+   "questions": 0.6266666666666667,
+   "turns": 1.5066666666666666,
+   "latency": 0.9179402646800272,
+   "tokens": 2076.1133333333332,
+   "n": 300,
+   "by_category": {
+    "pizza_human": 0.81
+   }
+  },
+  "C5": {
+   "exact": 0.81,
+   "f1": 0.8292682926829268,
+   "completion": 0.11666666666666667,
+   "invalid_raw": 0.415929203539823,
+   "invalid_confirm": 0.0,
+   "missed": 0.11428571428571428,
+   "unnecessary": 0.5083932853717026,
+   "questions": 1.39,
+   "turns": 1.5066666666666666,
+   "latency": 5.972582743084883,
+   "tokens": 2076.1133333333332,
+   "n": 300,
+   "by_category": {
+    "pizza_human": 0.81
+   }
+  }
+ }
+}
