@@ -191,3 +191,60 @@ class SameNameAtTwoRestaurantsTests(SimpleTestCase):
         self.assertEqual(result["message"], "Where should I deliver the order?")
         self.assertEqual(result["cart"]["items"][0]["name"], "Chicken Burger")
         self.assertEqual(result["cart"]["vendorName"], "Street Shack")
+
+
+@override_settings(AI_SAMPLE_AGREEMENT_K=0, AI_MAX_QUESTIONS=5, AI_NEAR_MATCH_THRESHOLD=0.65,
+                   AI_DELIVERY_LOCATIONS=["Blanton Hall", "Student Center"])
+class SameNameWhateverTheModelSaysTests(SimpleTestCase):
+    """The model sometimes picks one of two same-name items and sometimes none; the customer must see the same thing."""
+
+    def _first(self, line_id, text="i need a chicken burger", location=None):
+        state = initial_session(0)
+        with mock.patch(
+            "apps.conversational_ordering.services.interpret_turn",
+            return_value=(_draft([(line_id, "i need a chicken burger", 1, [])], location=location), dict(USAGE)),
+        ):
+            result, _ = parse_customer_turn(
+                uuid.uuid4(), 0, text, state, configuration="C3", catalog_override=SAME_NAME_CATALOG,
+            )
+        return result
+
+    def test_model_pick_and_model_blank_give_the_same_turn(self):
+        picked, blank = self._first("2"), self._first(None)
+        for key in ("action", "message", "options"):
+            self.assertEqual(picked[key], blank[key])
+        self.assertEqual(picked["cart"]["items"], blank["cart"]["items"])
+        self.assertEqual(picked["cart"]["items"][0]["name"], "a chicken burger (not chosen yet)")
+        self.assertIn("Which restaurant", picked["message"])
+
+    def test_model_pick_is_not_confirmed_even_with_a_location(self):
+        result = self._first("1", location="Blanton Hall")
+        self.assertNotEqual(result["action"], "CONFIRM")
+        self.assertIn("Which restaurant", result["message"])
+
+    def test_cart_restaurant_decides(self):
+        state = initial_session(0)
+        with mock.patch(
+            "apps.conversational_ordering.services.interpret_turn",
+            return_value=(_draft([("3", "fries", 1, []), ("1", "a chicken burger", 1, [])], location="Blanton Hall"),
+                          dict(USAGE)),
+        ):
+            result, _ = parse_customer_turn(
+                uuid.uuid4(), 0, "Fries and a chicken burger to Blanton Hall.", state,
+                configuration="C3", catalog_override=SAME_NAME_CATALOG,
+            )
+        self.assertEqual(result["action"], "CONFIRM")
+        self.assertEqual(sorted(line["menuItemId"] for line in result["cart"]["items"]), ["2", "3"])
+        self.assertEqual(result["cart"]["vendorName"], "Street Shack")
+
+    def test_unique_full_name_is_still_settled(self):
+        state = initial_session(0)
+        with mock.patch(
+            "apps.conversational_ordering.services.interpret_turn",
+            return_value=(_draft([("3", "fries", 1, [])], location="Blanton Hall"), dict(USAGE)),
+        ):
+            result, _ = parse_customer_turn(
+                uuid.uuid4(), 0, "Fries to Blanton Hall.", state,
+                configuration="C3", catalog_override=SAME_NAME_CATALOG,
+            )
+        self.assertEqual(result["action"], "CONFIRM")

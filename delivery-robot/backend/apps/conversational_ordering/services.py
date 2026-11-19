@@ -500,6 +500,73 @@ def _decide(
     return result, state
 
 
+def _same_name_items(menu_item, catalog):
+    """Available items with exactly this item's name, one per restaurant that sells it."""
+    name = normalize_text(menu_item["name"])
+    return [
+        item for item in catalog
+        if item["available"] and normalize_text(item["name"]) == name
+    ]
+
+
+def _settle_named_items(parsed, transcript, catalog):
+    """Which lines the customer settled by saying an item's full name.
+
+    A full name settles a line only if one restaurant sells an item of that
+    name. When several do ("chicken burger" at two places), the model's pick is
+    a guess, so the line stays open and the customer is asked, whether the
+    model picked one or left it empty. The exception is a cart that already
+    holds another restaurant's items: an order comes from one restaurant, so
+    that restaurant's item is used.
+
+    Returns ``(parsed, settled_ids, notes)``.
+    """
+    by_id = {item["id"]: item for item in catalog}
+    data = parsed.model_dump(mode="json")
+    groups = {}
+    for index, line in enumerate(data["items"]):
+        menu_item = by_id.get(str(line.get("menu_item_id")))
+        if menu_item is not None:
+            if _explicitly_mentions(transcript, menu_item):
+                groups[index] = _same_name_items(menu_item, catalog)
+            continue
+        named = [item for item in catalog if item["available"] and names_item(line.get("mention") or "", item["name"])]
+        if named and len({normalize_text(item["name"]) for item in named}) == 1:
+            groups[index] = named
+
+    cart_vendors = {
+        by_id[str(line.get("menu_item_id"))]["vendor_id"]
+        for index, line in enumerate(data["items"])
+        if str(line.get("menu_item_id")) in by_id
+        and (index not in groups or len(groups[index]) == 1)
+    }
+    settled, notes = set(), []
+    for index, group in groups.items():
+        line = data["items"][index]
+        if len(group) == 1:
+            if str(line.get("menu_item_id")) == group[0]["id"]:
+                settled.add(group[0]["id"])
+            continue
+        at_cart_vendor = [item for item in group if item["vendor_id"] in cart_vendors]
+        if len(cart_vendors) == 1 and len(at_cart_vendor) == 1:
+            chosen = at_cart_vendor[0]
+            if str(line.get("menu_item_id")) != chosen["id"]:
+                notes.append({"line": index, "action": "same_name_at_cart_vendor",
+                              "from": line.get("menu_item_id"), "to": chosen["id"]})
+                line["menu_item_id"] = chosen["id"]
+            settled.add(chosen["id"])
+        elif line.get("menu_item_id") is not None:
+            # Clear the guess so this turn looks exactly like the model leaving
+            # the item empty: same question, same "(not chosen yet)" cart line.
+            notes.append({"line": index, "action": "same_name_left_open", "from": line["menu_item_id"]})
+            if not names_item(line.get("mention") or "", group[0]["name"]):
+                line["mention"] = group[0]["name"]
+            line["menu_item_id"] = None
+    if notes:
+        parsed = ParsedOrder.model_validate(data)
+    return parsed, settled, notes
+
+
 def parse_customer_turn(
     session_id,
     user_id,
@@ -528,13 +595,8 @@ def parse_customer_turn(
     preservation_notes = list(preservation_notes) + canonical_notes
     # Items the customer has called by their full name are settled; the
     # validator stops offering look-alikes for them.
-    by_id = {item["id"]: item for item in catalog}
-    named = {
-        str(line.menu_item_id)
-        for line in parsed.items
-        if str(line.menu_item_id) in by_id
-        and _explicitly_mentions(transcript, by_id[str(line.menu_item_id)])
-    }
+    parsed, named, settle_notes = _settle_named_items(parsed, transcript, catalog)
+    preservation_notes += settle_notes
     if named:
         state["resolved_item_ids"] = sorted(set(state.get("resolved_item_ids", [])) | named)
 
