@@ -1,0 +1,39 @@
+{
+  "C2": {
+    "dialogues": 600,
+    "turns": 964,
+    "exact_order_accuracy": 0.9466666666666667,
+    "successful_valid_exact_rate": 0.9466666666666667,
+    "invalid_final_draft_rate": 0.0033333333333333335,
+    "missed_clarification_rate": 0.10909090909090909,
+    "unnecessary_clarification_rate": 0.008787346221441126,
+    "questions_per_dialogue": 0.4166666666666667,
+    "mean_turns_per_dialogue": 1.6066666666666667,
+    "mean_turn_latency_ms": 53.617099169844614,
+    "mean_tokens_per_dialogue": 1945.7483333333332,
+    "wrong_turns": 275,
+    "correct_turns": 569,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 120,
+        "exact_order_accuracy": 0.85
+      },
+      "clear_request": {
+        "n": 120,
+        "exact_order_accuracy": 1.0
+      },
+      "correction": {
+        "n": 120,
+        "exact_order_accuracy": 1.0
+      },
+      "customization": {
+        "n": 120,
+        "exact_order_accuracy": 0.8916666666666667
+      },
+      "unavailable_option": {
+        "n": 120,
+        "exact_order_accuracy": 0.9916666666666667
+      }
+    }
+  }
+}
