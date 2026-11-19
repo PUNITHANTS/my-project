@@ -5,7 +5,14 @@ from django.core import signing
 
 from .canonicalize import canonicalize_draft
 from .groq_client import AIProviderError, interpret_turn
-from .menu_validation import load_menu_catalog, names_item, normalize_text, validate_draft
+from .menu_validation import (
+    candidate_label,
+    display_mention,
+    load_menu_catalog,
+    names_item,
+    normalize_text,
+    validate_draft,
+)
 from .policies import choose_clarification_policy
 from .questions import (
     REMOVE_CUSTOMIZATION,
@@ -244,13 +251,29 @@ def _repair_question(validation):
         return f"Which available customization would you like: {', '.join(alternatives[:8])}?"
     alternatives = violation.get("alternatives") or []
     if alternatives and isinstance(alternatives[0], dict):
-        names = [option["name"] for option in alternatives[:5]]
-        return f"{violation['message']} Which would you like: {', '.join(names)}?"
+        return _which_item_question(violation, alternatives[:5])
     if alternatives:
         return f"{violation['message']} Available choices: {', '.join(alternatives[:8])}."
     if violation["code"] == "quantity_limit":
         return f"{violation['message']} What quantity would you like instead?"
     return violation["message"]
+
+
+def _which_item_question(violation, candidates, mention=None):
+    """"Which one?" with the restaurant named when two places sell the same item."""
+    names = {normalize_text(c["name"]) for c in candidates}
+    if len(names) == 1 and len(candidates) > 1:
+        vendors = [c.get("vendor") or "another restaurant" for c in candidates]
+        return (
+            f"{candidates[0]['name']} is sold by {', '.join(vendors[:-1])} and {vendors[-1]}. "
+            "Which restaurant should it come from?"
+        )
+    labels = ", ".join(candidate_label(c, candidates) for c in candidates)
+    if violation["code"] == "unknown_item":
+        return f"{violation['message']} Did you mean: {labels}?"
+    if violation["code"] == "unavailable_item":
+        return f"{violation['message']} Would you like one of these instead: {labels}?"
+    return f"Which did you mean by '{display_mention(mention)}': {labels}?"
 
 
 def _clarification_question(parsed, validation, signals):
@@ -262,8 +285,7 @@ def _clarification_question(parsed, validation, signals):
         (match for match in validation["near_matches"] if match["count"] >= 2), None
     )
     if ambiguous:
-        names = ", ".join(item["name"] for item in ambiguous["candidates"][:5])
-        return f"Which menu item did you mean by '{ambiguous['mention']}': {names}?"
+        return _which_item_question({"code": "ambiguous"}, ambiguous["candidates"][:5], ambiguous["mention"])
     if signals["s4"] > 0 and not parsed.items:
         return "What would you like to order?"
     return (parsed.clarification_needed or "Could you clarify your order?")[:300]
@@ -301,7 +323,8 @@ def _draft_output(parsed, catalog, vendor_id):
         "items": [
             {
                 "menuItemId": item.menu_item_id,
-                "name": by_id.get(str(item.menu_item_id), {}).get("name", item.mention),
+                "name": by_id.get(str(item.menu_item_id), {}).get("name")
+                or f"{display_mention(item.mention)} (not chosen yet)",
                 "mention": item.mention,
                 "quantity": item.quantity,
                 "customizations": item.customizations,
@@ -346,7 +369,8 @@ def _cart_output(parsed, catalog, vendor_id):
             {
                 "line": index,
                 "menuItemId": item.menu_item_id,
-                "name": by_id.get(str(item.menu_item_id), {}).get("name", item.mention),
+                "name": by_id.get(str(item.menu_item_id), {}).get("name")
+                or f"{display_mention(item.mention)} (not chosen yet)",
                 "quantity": item.quantity,
                 "customization": ", ".join(item.customizations),
                 "customizations": item.customizations,

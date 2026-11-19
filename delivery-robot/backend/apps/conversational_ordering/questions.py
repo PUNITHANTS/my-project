@@ -12,19 +12,22 @@ kiosk shows is always a value the backend will accept. Slots:
 
 from django.conf import settings
 
+from .menu_validation import candidate_label
+
 
 MAX_OPTIONS = 8
 REMOVE_CUSTOMIZATION = ""
 
 
 def _item_options(line, candidates):
+    shown = candidates[:MAX_OPTIONS]
     return [
         {
             "slot": f"item:{line}",
-            "label": candidate["name"],
+            "label": candidate_label(candidate, shown),
             "menuItemId": str(candidate["menu_item_id"]),
         }
-        for candidate in candidates[:MAX_OPTIONS]
+        for candidate in shown
     ]
 
 

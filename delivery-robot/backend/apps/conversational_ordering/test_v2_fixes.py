@@ -144,3 +144,50 @@ class PreservationTests(SimpleTestCase):
         first = (_draft([("101", "two burgers", 2, [])]), "Two burgers to the Library.")
         second = (_draft([("104", "one veggie burger", 1, [])]), "Just one veggie burger.")
         self.assertEqual(self._turns([first, second]), [("104", 1)])
+
+
+SAME_NAME_CATALOG = [
+    {**_item("1", "Chicken burger", 1), "vendor": "Hawk Grill"},
+    {**_item("2", "Chicken Burger", 2), "vendor": "Street Shack"},
+    {**_item("3", "Fries", 2), "vendor": "Street Shack"},
+]
+
+
+@override_settings(AI_SAMPLE_AGREEMENT_K=0, AI_MAX_QUESTIONS=5, AI_NEAR_MATCH_THRESHOLD=0.65,
+                   AI_DELIVERY_LOCATIONS=["Blanton Hall", "Student Center"])
+class SameNameAtTwoRestaurantsTests(SimpleTestCase):
+    """Kiosk run of 2026-11-19: "i need a chicken burger" with two vendors selling one."""
+
+    def test_item_is_asked_first_with_restaurant_names(self):
+        from .services import apply_selected_option
+
+        state = initial_session(0)
+        session = uuid.uuid4()
+        with mock.patch(
+            "apps.conversational_ordering.services.interpret_turn",
+            return_value=(_draft([(None, "i need a chicken burger", 1, [])], location=None), dict(USAGE)),
+        ):
+            result, state = parse_customer_turn(
+                session, 0, "i need a chicken burger", state, configuration="C3",
+                catalog_override=SAME_NAME_CATALOG,
+            )
+        self.assertEqual(result["action"], "REPAIR")
+        self.assertEqual(
+            result["message"],
+            "Chicken burger is sold by Hawk Grill and Street Shack. Which restaurant should it come from?",
+        )
+        self.assertEqual(
+            [option["label"] for option in result["options"]],
+            ["Chicken burger (Hawk Grill)", "Chicken Burger (Street Shack)"],
+        )
+        self.assertEqual(result["cart"]["items"][0]["name"], "a chicken burger (not chosen yet)")
+
+        with mock.patch("apps.conversational_ordering.services.interpret_turn") as interpret:
+            result, state = apply_selected_option(
+                session, 0, {"slot": "item:0", "menuItemId": "2"}, state,
+                catalog_override=SAME_NAME_CATALOG,
+            )
+        interpret.assert_not_called()
+        self.assertEqual(result["message"], "Where should I deliver the order?")
+        self.assertEqual(result["cart"]["items"][0]["name"], "Chicken Burger")
+        self.assertEqual(result["cart"]["vendorName"], "Street Shack")

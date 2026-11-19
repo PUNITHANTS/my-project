@@ -116,6 +116,37 @@ def _match_score(mention, item_name):
     return max(overlap, sequence)
 
 
+LEAD_IN = re.compile(
+    r"^(?:(?:hi|hey|hello|yo|um|uh|okay|ok|so|actually|please)[\s,!.]+)*"
+    r"(?:(?:i|we)\s+(?:need|want|would like|'d like|d like|will have|'ll have|ll have|am getting|'m getting)"
+    r"|(?:can|could|may)\s+(?:i|we)\s+(?:get|have|order|grab)"
+    r"|give me|get me|i'll take|i will take|let me get|let me have|i'd love)\s+"
+    r"(?:to\s+(?:order|get|have|grab)\s+)?",
+    re.IGNORECASE,
+)
+
+
+def display_mention(mention):
+    """The customer's words for an item without "I need" or "please" around them."""
+    text = (mention or "").strip()
+    text = LEAD_IN.sub("", text)
+    text = re.sub(r"[\s,]*(?:please|thanks|thank you)?[\s.!?]*$", "", text, flags=re.IGNORECASE)
+    return text or (mention or "").strip()
+
+
+def candidate_label(candidate, candidates):
+    """An option's label; adds the restaurant when another option has the same name."""
+    name = candidate["name"]
+    same = [c for c in candidates if normalize_text(c["name"]) == normalize_text(name)]
+    if len(same) > 1 and candidate.get("vendor"):
+        return f"{name} ({candidate['vendor']})"
+    return name
+
+
+def _candidate(item, score):
+    return {"menu_item_id": item["id"], "name": item["name"], "vendor": item.get("vendor"), "score": score}
+
+
 def _candidate_items(mention, catalog, threshold):
     available = [item for item in catalog if item["available"]]
     # A mention that spells out an item's full name is not ambiguous, even when
@@ -125,14 +156,14 @@ def _candidate_items(mention, catalog, threshold):
     if named:
         longest = max(len(match_tokens(item["name"])) for item in named)
         return [
-            {"menu_item_id": item["id"], "name": item["name"], "score": 1.0}
+            _candidate(item, 1.0)
             for item in named
             if len(match_tokens(item["name"])) == longest
         ]
     ranked = [(item, _match_score(mention, item["name"])) for item in available]
     ranked.sort(key=lambda pair: pair[1], reverse=True)
     return [
-        {"menu_item_id": item["id"], "name": item["name"], "score": round(score, 4)}
+        _candidate(item, round(score, 4))
         for item, score in ranked
         if score >= threshold
     ]
@@ -154,18 +185,11 @@ def validate_draft(parsed, catalog, near_match_threshold, resolved_item_ids=()):
 
     if not parsed.items:
         violations.append({"code": "empty_order", "message": "Add at least one menu item."})
-    if not (parsed.delivery_location or "").strip():
-        violations.append(
-            {"code": "missing_location", "message": "A delivery location is required."}
-        )
-
     for index, line in enumerate(parsed.items):
         menu_item = by_id.get(str(line.menu_item_id)) if line.menu_item_id else None
         candidates = _candidate_items(line.mention, catalog, near_match_threshold)
         if menu_item is not None and menu_item["id"] in resolved:
-            candidates = [
-                {"menu_item_id": menu_item["id"], "name": menu_item["name"], "score": 1.0}
-            ]
+            candidates = [_candidate(menu_item, 1.0)]
         elif (
             menu_item is not None
             and not candidates
@@ -175,7 +199,7 @@ def validate_draft(parsed, catalog, near_match_threshold, resolved_item_ids=()):
             # shares nothing with it. That choice is a guess, so treat the line as
             # ambiguous among the same vendor's items instead of trusting it.
             candidates = [
-                {"menu_item_id": item["id"], "name": item["name"], "score": 0.0}
+                _candidate(item, 0.0)
                 for item in catalog
                 if item["available"] and item["vendor_id"] == menu_item["vendor_id"]
             ]
@@ -193,7 +217,7 @@ def validate_draft(parsed, catalog, near_match_threshold, resolved_item_ids=()):
                     "code": "unknown_item",
                     "line": index,
                     "item_id": line.menu_item_id,
-                    "message": f"'{line.mention}' does not identify a current menu item.",
+                    "message": f"I couldn't find '{display_mention(line.mention)}' on the menu.",
                     "alternatives": candidates[:5],
                 }
             )
@@ -275,6 +299,11 @@ def validate_draft(parsed, catalog, near_match_threshold, resolved_item_ids=()):
     if len(vendor_ids) > 1:
         violations.append(
             {"code": "multiple_vendors", "message": "An order must contain items from one vendor."}
+        )
+    # Asked last: settle what the customer wants before where it goes.
+    if not (parsed.delivery_location or "").strip():
+        violations.append(
+            {"code": "missing_location", "message": "A delivery location is required."}
         )
     return {
         "valid": not violations,
