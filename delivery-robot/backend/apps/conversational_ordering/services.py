@@ -3,6 +3,7 @@ import re
 from django.conf import settings
 from django.core import signing
 
+from .canonicalize import canonicalize_draft
 from .groq_client import AIProviderError, interpret_turn
 from .menu_validation import load_menu_catalog, names_item, normalize_text, validate_draft
 from .policies import choose_clarification_policy
@@ -112,6 +113,8 @@ def _preserve_untouched(previous, parsed, transcript, catalog, asked_line=None):
         and re.search(r"\b(change|make|switch|remove|add|actually|instead|not)\b", normalized_transcript)
     )
     removal = bool(re.search(r"\b(remove|delete|drop|cancel|without|no longer)\b", normalized_transcript))
+    # "Change that to three spicy burgers": the old line is swapped, not kept.
+    replace_cue = bool(re.search(r"\b(change|switch|swap|replace|instead)\b", normalized_transcript))
     preservation_notes = []
     old_ids = {str(item.get("menu_item_id")) for item in old_items}
     # The answer brought in a line that was not there before: the asked-about
@@ -132,6 +135,8 @@ def _preserve_untouched(previous, parsed, transcript, catalog, asked_line=None):
             if removal and (explicitly_touched or can_apply_reference):
                 continue
             if has_replacement and _is_asked_line(old_item, asked_line):
+                continue
+            if has_replacement and replace_cue and (explicitly_touched or can_apply_reference):
                 continue
             new_data["items"].append(old_item)
             preservation_notes.append({"menu_item_id": item_id, "action": "restored_missing_line"})
@@ -427,6 +432,8 @@ def parse_customer_turn(
     parsed, preservation_notes = _preserve_untouched(
         prior_draft, parsed, transcript, catalog, state.get("asked_line")
     )
+    parsed, canonical_notes = canonicalize_draft(parsed, transcript, catalog, prior_draft)
+    preservation_notes = list(preservation_notes) + canonical_notes
     # Items the customer has called by their full name are settled; the
     # validator stops offering look-alikes for them.
     by_id = {item["id"]: item for item in catalog}

@@ -3,7 +3,8 @@
 # already-answered turns free).
 param(
     [string]$Model = "gpt-oss:20b",
-    [string]$OutRoot = "data/evaluations/rerun_fixed"
+    [string]$OutRoot = "data/evaluations/rerun_fixed",
+    [string]$PolicyModel = "artifacts/clarification_policy_v2.joblib"
 )
 $ErrorActionPreference = "Stop"
 Set-Location "C:\Users\kamal\Downloads\my-project\delivery-robot\backend"
@@ -16,7 +17,7 @@ $env:GROQ_MODEL = $Model
 $env:AI_SAMPLE_AGREEMENT_K = "0"
 $env:PYTHONUNBUFFERED = "1"
 $snapshot = "data/menu_snapshot_v1.json"
-$policyModel = "artifacts/clarification_policy_v2.joblib"
+$policyModel = $PolicyModel
 
 function Step($name, [scriptblock]$body) {
     Write-Output "=== $(Get-Date -Format s) START $name"
