@@ -24,3 +24,7 @@ delivery-robot/**/.env
 delivery-robot/**/.env.*
 !delivery-robot/**/.env.example
 delivery-robot/backend/data/llm_cache/
+
+# Downloaded public datasets (licenses: see data/v2/SOURCES.md); not redistributed
+delivery-robot/backend/data/external/
+delivery-robot/backend/data/v2/run_eval_v2.log

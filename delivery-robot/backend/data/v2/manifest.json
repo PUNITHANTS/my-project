@@ -1,0 +1,76 @@
+{
+  "train": {
+    "dialogues": 603,
+    "categories": {
+      "ambiguous_item": 67,
+      "clear_request": 67,
+      "correction": 67,
+      "customization": 67,
+      "multi_item": 67,
+      "multi_problem": 67,
+      "quantity_limit": 67,
+      "removal": 67,
+      "unavailable_option": 67
+    },
+    "templates": 24,
+    "paraphrase_tried": 429,
+    "paraphrase_kept": 419,
+    "dialogues_with_paraphrase": 358
+  },
+  "validation": {
+    "dialogues": 198,
+    "categories": {
+      "ambiguous_item": 22,
+      "clear_request": 22,
+      "correction": 22,
+      "customization": 22,
+      "multi_item": 22,
+      "multi_problem": 22,
+      "quantity_limit": 22,
+      "removal": 22,
+      "unavailable_option": 22
+    },
+    "templates": 24,
+    "paraphrase_tried": 166,
+    "paraphrase_kept": 161,
+    "dialogues_with_paraphrase": 134
+  },
+  "test_a": {
+    "dialogues": 198,
+    "categories": {
+      "ambiguous_item": 22,
+      "clear_request": 22,
+      "correction": 22,
+      "customization": 22,
+      "multi_item": 22,
+      "multi_problem": 22,
+      "quantity_limit": 22,
+      "removal": 22,
+      "unavailable_option": 22
+    },
+    "templates": 18,
+    "paraphrase_tried": 144,
+    "paraphrase_kept": 138,
+    "dialogues_with_paraphrase": 114
+  },
+  "test_b": {
+    "dialogues": 200,
+    "categories": {
+      "ambiguous_item": 20,
+      "clear_request": 20,
+      "correction": 20,
+      "customization": 20,
+      "multi_item": 20,
+      "multi_problem": 20,
+      "partial_answer": 20,
+      "quantity_limit": 20,
+      "removal": 20,
+      "unavailable_option": 20
+    },
+    "templates": 19,
+    "paraphrase_tried": 149,
+    "paraphrase_kept": 145,
+    "dialogues_with_paraphrase": 114
+  },
+  "template_overlap_dev_test": []
+}

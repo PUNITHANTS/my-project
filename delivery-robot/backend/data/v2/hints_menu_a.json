@@ -1,0 +1,34 @@
+{
+  "_about": "Generation-only wording hints for menu_snapshot_v1.json. Not used by the assistant.",
+  "items": {
+    "106": {"unit": "order"},
+    "108": {"unit": "order"},
+    "109": {"unit": "order"},
+    "305": {"unit": "bag"},
+    "201": {"family": "drink"},
+    "202": {"family": "drink"},
+    "203": {"family": "drink"},
+    "204": {"family": "drink"},
+    "208": {"family": "drink"},
+    "503": {"family": "rice bowl"},
+    "504": {"family": "rice bowl"},
+    "206": {"family": ""},
+    "306": {"family": ""}
+  },
+  "groups": {
+    "Bread": {"say": "on {option}"}
+  },
+  "off_menu": [
+    {"request": "a milkshake", "vendor_id": 2},
+    {"request": "a cappuccino", "vendor_id": 2},
+    {"request": "a sprite", "vendor_id": 2},
+    {"request": "a caesar salad", "vendor_id": 3},
+    {"request": "a fish sandwich", "vendor_id": 3},
+    {"request": "mozzarella sticks", "vendor_id": 1},
+    {"request": "a breakfast burrito", "vendor_id": 1},
+    {"request": "a gluten-free pizza", "vendor_id": 4},
+    {"request": "a calzone", "vendor_id": 4},
+    {"request": "a protein shake", "vendor_id": 5},
+    {"request": "a poke bowl", "vendor_id": 5}
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "_about": "Generation-only wording hints for menu_snapshot_b.json (held-out menu). Not used by the assistant.",
+  "items": {
+    "602": {"family": "soda"},
+    "604": {"family": "soda"},
+    "606": {"family": "soda"},
+    "608": {"family": "soda"},
+    "609": {"family": "soda"},
+    "612": {"family": "soda"},
+    "603": {"family": "diet soda"},
+    "605": {"family": "diet soda"},
+    "607": {"family": "diet soda"},
+    "610": {"family": ""},
+    "611": {"family": ""},
+    "613": {"family": ""},
+    "601": {"family": ""},
+    "801": {"family": "milk tea"},
+    "802": {"family": "milk tea"},
+    "803": {"family": "milk tea"},
+    "804": {"family": "fruit tea"},
+    "805": {"family": "fruit tea"},
+    "705": {"unit": "order", "family": ""},
+    "904": {"unit": "order", "family": ""},
+    "906": {"family": ""}
+  },
+  "groups": {
+    "Tortilla": {"say": "on {option} tortillas"},
+    "Spice level": {"before": true},
+    "Crust": {"say": "with {option}"}
+  },
+  "off_menu": [
+    {"request": "a root beer", "vendor_id": 6},
+    {"request": "a calzone", "vendor_id": 6},
+    {"request": "a fish taco", "vendor_id": 7},
+    {"request": "nachos", "vendor_id": 7},
+    {"request": "a burrito", "vendor_id": 7},
+    {"request": "a thai tea", "vendor_id": 8},
+    {"request": "a strawberry smoothie", "vendor_id": 8},
+    {"request": "butter chicken", "vendor_id": 9},
+    {"request": "biryani", "vendor_id": 9},
+    {"request": "a mango smoothie", "vendor_id": 9}
+  ]
+}
