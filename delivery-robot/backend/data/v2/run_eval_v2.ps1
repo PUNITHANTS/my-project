@@ -26,6 +26,9 @@ $env:LLM_API_BASE = "http://localhost:11434/v1/chat/completions"
 $env:LLM_API_KEY = "ollama"
 $env:GROQ_MODEL = $Model
 $env:AI_SAMPLE_AGREEMENT_K = "0"
+# The campus delivery points the dataset uses (generate_v2.LOCATIONS); the
+# location fallback in canonicalize_draft reads this list.
+$env:AI_DELIVERY_LOCATIONS = "Sprague Library,Student Center,University Hall,Blanton Hall,Recreation Center,Dickson Hall,Calcia Hall,Freeman Hall,Richardson Hall,Partridge Hall,Life Hall,College Hall"
 $env:PYTHONUNBUFFERED = "1"
 $menuA = "data/menu_snapshot_v1.json"
 $menuB = "data/v2/menu_snapshot_b.json"

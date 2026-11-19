@@ -61,6 +61,14 @@ class Command(BaseCommand):
         parser.add_argument("--configuration", default="C2", help="Use only feature rows from this policy run")
         parser.add_argument("--missed-cost", type=float, default=5.0)
         parser.add_argument("--unnecessary-cost", type=float, default=1.0)
+        parser.add_argument(
+            "--max-unnecessary-rate", type=float, default=0.5,
+            help="Refuse a threshold that asks on more than this share of correct validation drafts",
+        )
+        parser.add_argument(
+            "--allow-degenerate", action="store_true",
+            help="Save the model even if it fails --max-unnecessary-rate (for reproducing a result)",
+        )
 
     def handle(self, *args, **options):
         train_rows = read_rows(options["train"], options["configuration"])
@@ -93,6 +101,14 @@ class Command(BaseCommand):
             candidate = (cost, float(threshold), missed, unnecessary)
             if best is None or candidate < best:
                 best = candidate
+
+        if best[3] > options["max_unnecessary_rate"] and not options["allow_degenerate"]:
+            raise CommandError(
+                f"The cheapest threshold ({best[1]:.4f}) asks on {best[3]:.1%} of correct validation "
+                f"drafts, above --max-unnecessary-rate {options['max_unnecessary_rate']:.0%}. The signals "
+                "do not separate wrong drafts from correct ones well enough; no model was saved. "
+                "Pass --allow-degenerate to save it anyway."
+            )
 
         output = Path(options["output"])
         if output.exists():

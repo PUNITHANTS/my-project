@@ -13,9 +13,19 @@ seen in the C1-C5 traces, using only the menu and the customer's own words:
   the model leaves that group empty for the same item.
 * "Two X, one of them with Y" comes back as a line of two plus a line of one.
   The plain line is reduced by one.
+* ``"Toppings: Black olives"`` / ``"Size (required): Large"`` / ``"Onion"``: any
+  prefix ending in a colon is dropped, and an option is matched ignoring a
+  plural "s" or a leading describing word, when exactly one option fits.
+* ``"No sausage"`` / ``"Hold tuna"`` where sausage or tuna is an add-on of the
+  item: the customer asked for it not to be added, which is the default, so
+  the value is dropped.
+* The model leaves the location empty although the turn names exactly one
+  known delivery location ("Can Calcia Hall get a lamb curry?"). It is filled.
 """
 
 import re
+
+from django.conf import settings
 
 from .menu_validation import normalize_text
 from .schemas import ParsedOrder
@@ -25,23 +35,64 @@ def _phrase_in(text, phrase):
     return bool(phrase) and re.search(rf"\b{re.escape(phrase)}\b", text) is not None
 
 
+NEGATION = re.compile(r"^(no|without|hold|hold the|minus|skip)\s+\S")
+
+
+def _singular(text):
+    return " ".join(word[:-1] if len(word) > 3 and word.endswith("s") else word for word in text.split())
+
+
+def _exact_option(wanted, menu_item):
+    for group in menu_item["option_groups"]:
+        for option in group["options"]:
+            if normalize_text(option) == wanted:
+                return option
+    return None
+
+
 def _canonical_option(value, menu_item):
     """Return the menu's spelling of ``value`` or None if it names no option."""
     wanted = normalize_text(value)
     if not wanted:
         return None
-    for group in menu_item["option_groups"]:
-        for option in group["options"]:
-            if normalize_text(option) == wanted:
-                return option
+    exact = _exact_option(wanted, menu_item)
+    if exact is not None:
+        return exact
+    candidates = []
+    if ":" in value:
+        candidates.append(normalize_text(value.rsplit(":", 1)[1]))
     for group in menu_item["option_groups"]:
         prefix = normalize_text(group["name"])
         if wanted.startswith(prefix + " "):
-            rest = wanted[len(prefix) + 1:].strip()
-            for option in group["options"]:
-                if normalize_text(option) == rest:
-                    return option
+            candidates.append(wanted[len(prefix) + 1:].strip())
+    for rest in candidates:
+        exact = _exact_option(rest, menu_item)
+        if exact is not None:
+            return exact
+    # "Onion" for "Onions", "Black olives" for "Olives": accept only a unique fit.
+    # Never for a negation: "No ham" must not become "Ham".
+    for rest in candidates or [wanted]:
+        if NEGATION.match(rest):
+            continue
+        target = _singular(rest)
+        fits = {
+            option
+            for group in menu_item["option_groups"]
+            for option in group["options"]
+            if _singular(normalize_text(option)) == target
+            or target.endswith(" " + _singular(normalize_text(option)))
+        }
+        if len(fits) == 1:
+            return fits.pop()
     return None
+
+
+def _named_locations(text, locations):
+    found = [loc for loc in locations if _phrase_in(text, normalize_text(loc))]
+    return [
+        loc for loc in found
+        if not any(other != loc and _phrase_in(normalize_text(other), normalize_text(loc)) for other in found)
+    ]
 
 
 def _named_options(text, group):
@@ -57,8 +108,11 @@ def _named_options(text, group):
     ]
 
 
-def canonicalize_draft(parsed, transcript, catalog, previous=None):
-    """Return ``(parsed, notes)`` with the rules above applied."""
+def canonicalize_draft(parsed, transcript, catalog, previous=None, locations=None):
+    """Return ``(parsed, notes)`` with the rules above applied.
+
+    ``locations`` defaults to ``settings.AI_DELIVERY_LOCATIONS``.
+    """
     by_id = {item["id"]: item for item in catalog}
     data = parsed.model_dump(mode="json")
     text = normalize_text(transcript)
@@ -76,6 +130,19 @@ def canonicalize_draft(parsed, transcript, catalog, previous=None):
                 notes.append({"line": index, "action": "dropped_empty_customization"})
                 continue
             canonical = _canonical_option(value, menu_item)
+            negated = NEGATION.match(normalize_text(value))
+            if canonical is None and negated:
+                # "No sausage" where sausage is an add-on of this item: leaving
+                # it unselected is what the customer asked for. A negation the
+                # menu does not model ("no mayo" on a burger without a mayo
+                # option) is left for the validator to ask about.
+                rest = normalize_text(value)[negated.end(1):].strip()
+                add_on = _canonical_option(rest, menu_item)
+                if add_on is not None and normalize_text(add_on) not in {
+                    normalize_text(v) for v in line.get("customizations") or [] if v != value
+                }:
+                    notes.append({"line": index, "action": "dropped_negated_option", "from": value})
+                    continue
             if canonical is not None and canonical != value:
                 notes.append({"line": index, "action": "canonical_option", "from": value, "to": canonical})
             cleaned.append(canonical if canonical is not None else value)
@@ -123,6 +190,12 @@ def canonicalize_draft(parsed, transcript, catalog, previous=None):
             if small["quantity"] == 1 and big["quantity"] >= 2 and extra:
                 big["quantity"] -= 1
                 notes.append({"menu_item_id": item_id, "action": "split_one_of_them"})
+
+    if not data.get("delivery_location"):
+        named = _named_locations(text, settings.AI_DELIVERY_LOCATIONS if locations is None else locations)
+        if len(named) == 1:
+            data["delivery_location"] = named[0]
+            notes.append({"slot": "delivery_location", "action": "filled_named_location", "to": named[0]})
 
     if not notes:
         return parsed, []

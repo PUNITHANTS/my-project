@@ -93,6 +93,44 @@ def _is_asked_line(old_item, asked_line):
     )
 
 
+# Removal verbs seen in the v2 train/validation replies. A removal phrased some
+# other way ("never mind the fries") is still caught when the model drops the
+# named line itself (see "accepted_named_removal" below).
+REMOVAL_VERB = r"(remove|delete|drop|cancel|skip|ditch|take out|take off|get rid of)"
+# Only these words may stand between the verb and the item, so "skip onions on
+# the burger" does not remove the burger.
+DETERMINERS = r"(\s+(the|that|those|this|my|a|an|all|both|of|order|orders))*"
+NUMBER_WORD = re.compile(
+    r"\b(\d+|two|three|four|five|six|seven|eight|nine|ten|couple)\b"
+    # "one veggie burger" states a quantity; "the veggie one" does not.
+    r"|\bone\s+(?!of\b|please\b|thanks\b|thank\b)[a-z]"
+)
+
+
+def _removal_named(text, name):
+    """The turn asks for the named item to go: "skip the fries", "take the fries out"."""
+    name = re.escape(normalize_text(name))
+    return bool(
+        re.search(rf"\b{REMOVAL_VERB}\b{DETERMINERS}\s+{name}", text)
+        or re.search(rf"\btake{DETERMINERS}\s+{name}e?s?\s+(out|off)\b", text)
+    )
+
+
+def _resolves(old_item, new_item, catalog_by_id):
+    """``new_item`` is a specific item for the vague ``old_item`` ("burger" -> veggie burger)."""
+    if old_item.get("menu_item_id") is None:
+        return True
+    words = [
+        w for w in normalize_text(old_item.get("mention") or "").split()
+        if w not in ("a", "an", "the", "some", "one") and not NUMBER_WORD.fullmatch(w)
+    ]
+    if not words:
+        return False
+    menu_item = catalog_by_id.get(str(new_item.get("menu_item_id")))
+    target = normalize_text(" ".join([new_item.get("mention") or "", menu_item["name"] if menu_item else ""]))
+    return all(re.search(rf"\b{re.escape(w.rstrip('s'))}", target) for w in words)
+
+
 def _preserve_untouched(previous, parsed, transcript, catalog, asked_line=None):
     """Put back lines the model dropped or changed although the customer did not.
 
@@ -112,7 +150,10 @@ def _preserve_untouched(previous, parsed, transcript, catalog, asked_line=None):
         re.search(r"\b(that|it|those|same one|last one)\b", normalized_transcript)
         and re.search(r"\b(change|make|switch|remove|add|actually|instead|not)\b", normalized_transcript)
     )
-    removal = bool(re.search(r"\b(remove|delete|drop|cancel|without|no longer)\b", normalized_transcript))
+    removal = bool(
+        re.search(rf"\b({REMOVAL_VERB[1:-1]}|dropped|without|no longer)\b", normalized_transcript)
+        or re.search(r"\btake\s+(\w+\s+){0,4}(out|off)\b", normalized_transcript)
+    )
     # "Change that to three spicy burgers": the old line is swapped, not kept.
     replace_cue = bool(re.search(r"\b(change|switch|swap|replace|instead)\b", normalized_transcript))
     preservation_notes = []
@@ -120,6 +161,7 @@ def _preserve_untouched(previous, parsed, transcript, catalog, asked_line=None):
     # The answer brought in a line that was not there before: the asked-about
     # line was replaced, not lost.
     has_replacement = any(item_id not in old_ids for item_id in new_by_id)
+    new_lines = [item for item_id, item in new_by_id.items() if item_id not in old_ids]
 
     for old_item in old_items:
         item_id = str(old_item.get("menu_item_id"))
@@ -131,8 +173,34 @@ def _preserve_untouched(previous, parsed, transcript, catalog, asked_line=None):
         can_apply_reference = generic_reference and len(old_items) == 1
         current = new_by_id.get(item_id)
 
+        named_now = bool(menu_item and _explicitly_mentions(transcript, menu_item))
+        if current is not None and menu_item and _removal_named(normalized_transcript, menu_item["name"]):
+            # "Could I drop the cookie?" with the cookie still in the draft.
+            new_data["items"] = [row for row in new_data["items"] if row is not current]
+            preservation_notes.append({"menu_item_id": item_id, "action": "removed_named_line"})
+            continue
         if current is None:
             if removal and (explicitly_touched or can_apply_reference):
+                continue
+            # The customer named the line and the model took it out without
+            # adding anything new: a removal however it was phrased.
+            if named_now and not has_replacement:
+                preservation_notes.append({"menu_item_id": item_id, "action": "accepted_named_removal"})
+                continue
+            resolved_by = next(
+                (line for line in new_lines if not named_now and _resolves(old_item, line, catalog_by_id)),
+                None,
+            )
+            if resolved_by is not None:
+                # "A burger" answered with "a veggie burger": the vague line is
+                # replaced. "Two wraps ... the veggie one" keeps the two.
+                if (
+                    resolved_by.get("quantity") == 1
+                    and (old_item.get("quantity") or 1) > 1
+                    and not NUMBER_WORD.search(normalized_transcript)
+                ):
+                    resolved_by["quantity"] = old_item["quantity"]
+                preservation_notes.append({"menu_item_id": item_id, "action": "replaced_vague_line"})
                 continue
             if has_replacement and _is_asked_line(old_item, asked_line):
                 continue

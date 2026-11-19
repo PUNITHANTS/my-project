@@ -135,7 +135,7 @@ LLM_API_KEY = os.getenv("LLM_API_KEY", "") or GROQ_API_KEY
 LLM_API_BASE = os.getenv(
     "LLM_API_BASE", "https://api.groq.com/openai/v1/chat/completions"
 ).rstrip("/")
-AI_DEFAULT_POLICY = os.getenv("AI_DEFAULT_POLICY", "C5").upper()
+AI_DEFAULT_POLICY = os.getenv("AI_DEFAULT_POLICY", "C3").upper()
 AI_CONFIDENCE_THRESHOLD = float(os.getenv("AI_CONFIDENCE_THRESHOLD", "0.85"))
 AI_NEAR_MATCH_THRESHOLD = float(os.getenv("AI_NEAR_MATCH_THRESHOLD", "0.65"))
 AI_MAX_QUESTIONS = int(os.getenv("AI_MAX_QUESTIONS", "3"))

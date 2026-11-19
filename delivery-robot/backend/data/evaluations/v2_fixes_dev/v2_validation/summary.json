@@ -1,0 +1,55 @@
+{
+  "C2": {
+    "dialogues": 198,
+    "turns": 354,
+    "exact_order_accuracy": 0.9090909090909091,
+    "successful_valid_exact_rate": 0.9090909090909091,
+    "invalid_final_draft_rate": 0.025252525252525252,
+    "missed_clarification_rate": 0.09230769230769231,
+    "unnecessary_clarification_rate": 0.011111111111111112,
+    "questions_per_dialogue": 0.6111111111111112,
+    "mean_turns_per_dialogue": 1.7878787878787878,
+    "mean_turn_latency_ms": 124.60975960491615,
+    "mean_tokens_per_dialogue": 2244.712121212121,
+    "wrong_turns": 130,
+    "correct_turns": 180,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 22,
+        "exact_order_accuracy": 0.7727272727272727
+      },
+      "clear_request": {
+        "n": 22,
+        "exact_order_accuracy": 1.0
+      },
+      "correction": {
+        "n": 22,
+        "exact_order_accuracy": 0.8636363636363636
+      },
+      "customization": {
+        "n": 22,
+        "exact_order_accuracy": 1.0
+      },
+      "multi_item": {
+        "n": 22,
+        "exact_order_accuracy": 1.0
+      },
+      "multi_problem": {
+        "n": 22,
+        "exact_order_accuracy": 0.7727272727272727
+      },
+      "quantity_limit": {
+        "n": 22,
+        "exact_order_accuracy": 1.0
+      },
+      "removal": {
+        "n": 22,
+        "exact_order_accuracy": 0.9090909090909091
+      },
+      "unavailable_option": {
+        "n": 22,
+        "exact_order_accuracy": 0.8636363636363636
+      }
+    }
+  }
+}
