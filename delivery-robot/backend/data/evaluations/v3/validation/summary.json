@@ -1,0 +1,87 @@
+{
+  "C2": {
+    "dialogues": 200,
+    "turns": 360,
+    "exact_order_accuracy": 0.88,
+    "successful_valid_exact_rate": 0.88,
+    "invalid_final_draft_rate": 0.075,
+    "completed_exact_rate": 0.88,
+    "confirmed_rate": 0.925,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.045,
+    "line_item_f1": 0.9111969111969113,
+    "line_item_precision": 0.8939393939393939,
+    "line_item_recall": 0.9291338582677166,
+    "item_only_f1": 0.9613899613899614,
+    "missed_clarification_rate": 0.06,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.705,
+    "mean_turns_per_dialogue": 1.8,
+    "mean_turn_latency_ms": 3265.1761847216726,
+    "mean_tokens_per_dialogue": 4048.56,
+    "wrong_turns": 150,
+    "correct_turns": 176,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.7058823529411765,
+        "completed_exact_rate": 0.7058823529411765
+      },
+      "clear_request": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "correction": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "customization": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "multi_item": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "multi_problem": {
+        "n": 17,
+        "exact_order_accuracy": 0.47058823529411764,
+        "completed_exact_rate": 0.47058823529411764
+      },
+      "partial_answer": {
+        "n": 16,
+        "exact_order_accuracy": 0.8125,
+        "completed_exact_rate": 0.8125
+      },
+      "pizza_seed": {
+        "n": 16,
+        "exact_order_accuracy": 0.75,
+        "completed_exact_rate": 0.75
+      },
+      "quantity_limit": {
+        "n": 16,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "removal": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "same_name": {
+        "n": 16,
+        "exact_order_accuracy": 0.9375,
+        "completed_exact_rate": 0.9375
+      },
+      "unavailable_option": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      }
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "C2": {
+    "dialogues": 600,
+    "turns": 1076,
+    "exact_order_accuracy": 0.865,
+    "successful_valid_exact_rate": 0.865,
+    "invalid_final_draft_rate": 0.065,
+    "completed_exact_rate": 0.8633333333333333,
+    "confirmed_rate": 0.9333333333333333,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.07,
+    "line_item_f1": 0.8936446173800261,
+    "line_item_precision": 0.8844672657252889,
+    "line_item_recall": 0.9030144167758847,
+    "item_only_f1": 0.9494163424124513,
+    "missed_clarification_rate": 0.09210526315789473,
+    "unnecessary_clarification_rate": 0.0038461538461538464,
+    "questions_per_dialogue": 0.6933333333333334,
+    "mean_turns_per_dialogue": 1.7933333333333332,
+    "mean_turn_latency_ms": 3337.1806355013873,
+    "mean_tokens_per_dialogue": 4055.8433333333332,
+    "wrong_turns": 456,
+    "correct_turns": 520,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 50,
+        "exact_order_accuracy": 0.72,
+        "completed_exact_rate": 0.72
+      },
+      "clear_request": {
+        "n": 50,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "correction": {
+        "n": 50,
+        "exact_order_accuracy": 0.98,
+        "completed_exact_rate": 0.98
+      },
+      "customization": {
+        "n": 50,
+        "exact_order_accuracy": 0.88,
+        "completed_exact_rate": 0.88
+      },
+      "multi_item": {
+        "n": 50,
+        "exact_order_accuracy": 0.98,
+        "completed_exact_rate": 0.98
+      },
+      "multi_problem": {
+        "n": 50,
+        "exact_order_accuracy": 0.56,
+        "completed_exact_rate": 0.56
+      },
+      "partial_answer": {
+        "n": 50,
+        "exact_order_accuracy": 0.84,
+        "completed_exact_rate": 0.84
+      },
+      "pizza_seed": {
+        "n": 50,
+        "exact_order_accuracy": 0.68,
+        "completed_exact_rate": 0.68
+      },
+      "quantity_limit": {
+        "n": 50,
+        "exact_order_accuracy": 0.98,
+        "completed_exact_rate": 0.96
+      },
+      "removal": {
+        "n": 50,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "same_name": {
+        "n": 50,
+        "exact_order_accuracy": 0.92,
+        "completed_exact_rate": 0.92
+      },
+      "unavailable_option": {
+        "n": 50,
+        "exact_order_accuracy": 0.84,
+        "completed_exact_rate": 0.84
+      }
+    }
+  }
+}

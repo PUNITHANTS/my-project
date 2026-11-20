@@ -1,0 +1,427 @@
+{
+  "C1": {
+    "dialogues": 200,
+    "turns": 260,
+    "exact_order_accuracy": 0.51,
+    "successful_valid_exact_rate": 0.51,
+    "invalid_final_draft_rate": 0.43,
+    "completed_exact_rate": 0.51,
+    "confirmed_rate": 0.995,
+    "invalid_at_confirmation_rate": 0.425,
+    "wrong_at_confirmation_rate": 0.485,
+    "line_item_f1": 0.5807692307692307,
+    "line_item_precision": 0.578544061302682,
+    "line_item_recall": 0.583011583011583,
+    "item_only_f1": 0.8730769230769231,
+    "missed_clarification_rate": 0.782258064516129,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.14,
+    "mean_turns_per_dialogue": 1.3,
+    "mean_turn_latency_ms": 3454.442626153692,
+    "mean_tokens_per_dialogue": 2918.73,
+    "wrong_turns": 124,
+    "correct_turns": 102,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.23529411764705882,
+        "completed_exact_rate": 0.23529411764705882
+      },
+      "clear_request": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "correction": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "customization": {
+        "n": 17,
+        "exact_order_accuracy": 0.17647058823529413,
+        "completed_exact_rate": 0.17647058823529413
+      },
+      "multi_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "multi_problem": {
+        "n": 17,
+        "exact_order_accuracy": 0.23529411764705882,
+        "completed_exact_rate": 0.23529411764705882
+      },
+      "partial_answer": {
+        "n": 16,
+        "exact_order_accuracy": 0.0,
+        "completed_exact_rate": 0.0
+      },
+      "pizza_seed": {
+        "n": 16,
+        "exact_order_accuracy": 0.5,
+        "completed_exact_rate": 0.5
+      },
+      "quantity_limit": {
+        "n": 16,
+        "exact_order_accuracy": 0.0,
+        "completed_exact_rate": 0.0
+      },
+      "removal": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "same_name": {
+        "n": 16,
+        "exact_order_accuracy": 0.4375,
+        "completed_exact_rate": 0.4375
+      },
+      "unavailable_option": {
+        "n": 17,
+        "exact_order_accuracy": 0.5294117647058824,
+        "completed_exact_rate": 0.5294117647058824
+      }
+    }
+  },
+  "C2": {
+    "dialogues": 200,
+    "turns": 354,
+    "exact_order_accuracy": 0.845,
+    "successful_valid_exact_rate": 0.845,
+    "invalid_final_draft_rate": 0.075,
+    "completed_exact_rate": 0.845,
+    "confirmed_rate": 0.925,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.08,
+    "line_item_f1": 0.871401151631478,
+    "line_item_precision": 0.8664122137404581,
+    "line_item_recall": 0.8764478764478765,
+    "item_only_f1": 0.9520153550863724,
+    "missed_clarification_rate": 0.10596026490066225,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.68,
+    "mean_turns_per_dialogue": 1.77,
+    "mean_turn_latency_ms": 1055.7724081905885,
+    "mean_tokens_per_dialogue": 4007.37,
+    "wrong_turns": 151,
+    "correct_turns": 169,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.7647058823529411,
+        "completed_exact_rate": 0.7647058823529411
+      },
+      "clear_request": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "correction": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "customization": {
+        "n": 17,
+        "exact_order_accuracy": 0.5882352941176471,
+        "completed_exact_rate": 0.5882352941176471
+      },
+      "multi_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "multi_problem": {
+        "n": 17,
+        "exact_order_accuracy": 0.4117647058823529,
+        "completed_exact_rate": 0.4117647058823529
+      },
+      "partial_answer": {
+        "n": 16,
+        "exact_order_accuracy": 0.9375,
+        "completed_exact_rate": 0.9375
+      },
+      "pizza_seed": {
+        "n": 16,
+        "exact_order_accuracy": 0.75,
+        "completed_exact_rate": 0.75
+      },
+      "quantity_limit": {
+        "n": 16,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "removal": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "same_name": {
+        "n": 16,
+        "exact_order_accuracy": 0.8125,
+        "completed_exact_rate": 0.8125
+      },
+      "unavailable_option": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      }
+    }
+  },
+  "C3": {
+    "dialogues": 200,
+    "turns": 357,
+    "exact_order_accuracy": 0.855,
+    "successful_valid_exact_rate": 0.855,
+    "invalid_final_draft_rate": 0.08,
+    "completed_exact_rate": 0.77,
+    "confirmed_rate": 0.835,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.065,
+    "line_item_f1": 0.8773946360153256,
+    "line_item_precision": 0.870722433460076,
+    "line_item_recall": 0.8841698841698842,
+    "item_only_f1": 0.9616858237547893,
+    "missed_clarification_rate": 0.08552631578947369,
+    "unnecessary_clarification_rate": 0.09941520467836257,
+    "questions_per_dialogue": 0.785,
+    "mean_turns_per_dialogue": 1.785,
+    "mean_turn_latency_ms": 43.50975266082541,
+    "mean_tokens_per_dialogue": 4041.605,
+    "wrong_turns": 152,
+    "correct_turns": 171,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.8235294117647058,
+        "completed_exact_rate": 0.7058823529411765
+      },
+      "clear_request": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "correction": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "customization": {
+        "n": 17,
+        "exact_order_accuracy": 0.5882352941176471,
+        "completed_exact_rate": 0.5882352941176471
+      },
+      "multi_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "multi_problem": {
+        "n": 17,
+        "exact_order_accuracy": 0.4117647058823529,
+        "completed_exact_rate": 0.4117647058823529
+      },
+      "partial_answer": {
+        "n": 16,
+        "exact_order_accuracy": 0.9375,
+        "completed_exact_rate": 0.9375
+      },
+      "pizza_seed": {
+        "n": 16,
+        "exact_order_accuracy": 0.75,
+        "completed_exact_rate": 0.4375
+      },
+      "quantity_limit": {
+        "n": 16,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "removal": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "same_name": {
+        "n": 16,
+        "exact_order_accuracy": 0.875,
+        "completed_exact_rate": 0.5
+      },
+      "unavailable_option": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.8823529411764706
+      }
+    }
+  },
+  "C4": {
+    "dialogues": 200,
+    "turns": 354,
+    "exact_order_accuracy": 0.845,
+    "successful_valid_exact_rate": 0.845,
+    "invalid_final_draft_rate": 0.075,
+    "completed_exact_rate": 0.845,
+    "confirmed_rate": 0.92,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.075,
+    "line_item_f1": 0.871401151631478,
+    "line_item_precision": 0.8664122137404581,
+    "line_item_recall": 0.8764478764478765,
+    "item_only_f1": 0.9520153550863724,
+    "missed_clarification_rate": 0.09933774834437085,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.685,
+    "mean_turns_per_dialogue": 1.77,
+    "mean_turn_latency_ms": 10.896062426957023,
+    "mean_tokens_per_dialogue": 4007.5,
+    "wrong_turns": 151,
+    "correct_turns": 169,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.7647058823529411,
+        "completed_exact_rate": 0.7647058823529411
+      },
+      "clear_request": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "correction": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "customization": {
+        "n": 17,
+        "exact_order_accuracy": 0.5882352941176471,
+        "completed_exact_rate": 0.5882352941176471
+      },
+      "multi_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      },
+      "multi_problem": {
+        "n": 17,
+        "exact_order_accuracy": 0.4117647058823529,
+        "completed_exact_rate": 0.4117647058823529
+      },
+      "partial_answer": {
+        "n": 16,
+        "exact_order_accuracy": 0.9375,
+        "completed_exact_rate": 0.9375
+      },
+      "pizza_seed": {
+        "n": 16,
+        "exact_order_accuracy": 0.75,
+        "completed_exact_rate": 0.75
+      },
+      "quantity_limit": {
+        "n": 16,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "removal": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 1.0
+      },
+      "same_name": {
+        "n": 16,
+        "exact_order_accuracy": 0.8125,
+        "completed_exact_rate": 0.8125
+      },
+      "unavailable_option": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.9411764705882353
+      }
+    }
+  },
+  "C5": {
+    "dialogues": 200,
+    "turns": 358,
+    "exact_order_accuracy": 0.855,
+    "successful_valid_exact_rate": 0.855,
+    "invalid_final_draft_rate": 0.08,
+    "completed_exact_rate": 0.35,
+    "confirmed_rate": 0.395,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.045,
+    "line_item_f1": 0.8795411089866157,
+    "line_item_precision": 0.8712121212121212,
+    "line_item_recall": 0.888030888030888,
+    "item_only_f1": 0.9636711281070747,
+    "missed_clarification_rate": 0.058823529411764705,
+    "unnecessary_clarification_rate": 0.5906432748538012,
+    "questions_per_dialogue": 1.34,
+    "mean_turns_per_dialogue": 1.79,
+    "mean_turn_latency_ms": 169.0559486046241,
+    "mean_tokens_per_dialogue": 4052.865,
+    "wrong_turns": 153,
+    "correct_turns": 171,
+    "by_category": {
+      "ambiguous_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.8235294117647058,
+        "completed_exact_rate": 0.23529411764705882
+      },
+      "clear_request": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 0.35294117647058826
+      },
+      "correction": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 0.23529411764705882
+      },
+      "customization": {
+        "n": 17,
+        "exact_order_accuracy": 0.5882352941176471,
+        "completed_exact_rate": 0.29411764705882354
+      },
+      "multi_item": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.6470588235294118
+      },
+      "multi_problem": {
+        "n": 17,
+        "exact_order_accuracy": 0.4117647058823529,
+        "completed_exact_rate": 0.4117647058823529
+      },
+      "partial_answer": {
+        "n": 16,
+        "exact_order_accuracy": 0.9375,
+        "completed_exact_rate": 0.625
+      },
+      "pizza_seed": {
+        "n": 16,
+        "exact_order_accuracy": 0.75,
+        "completed_exact_rate": 0.4375
+      },
+      "quantity_limit": {
+        "n": 16,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 0.3125
+      },
+      "removal": {
+        "n": 17,
+        "exact_order_accuracy": 1.0,
+        "completed_exact_rate": 0.11764705882352941
+      },
+      "same_name": {
+        "n": 16,
+        "exact_order_accuracy": 0.875,
+        "completed_exact_rate": 0.3125
+      },
+      "unavailable_option": {
+        "n": 17,
+        "exact_order_accuracy": 0.9411764705882353,
+        "completed_exact_rate": 0.23529411764705882
+      }
+    }
+  }
+}

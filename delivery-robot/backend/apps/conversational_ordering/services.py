@@ -543,8 +543,10 @@ def _settle_named_items(parsed, transcript, catalog):
     settled, notes = set(), []
     for index, group in groups.items():
         line = data["items"][index]
-        if len(group) == 1:
-            if str(line.get("menu_item_id")) == group[0]["id"]:
+        # No available item of that name (the model picked an unavailable one):
+        # nothing to settle; the validator reports it as unavailable.
+        if len(group) <= 1:
+            if group and str(line.get("menu_item_id")) == group[0]["id"]:
                 settled.add(group[0]["id"])
             continue
         at_cart_vendor = [item for item in group if item["vendor_id"] in cart_vendors]

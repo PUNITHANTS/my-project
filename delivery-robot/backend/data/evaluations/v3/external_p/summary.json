@@ -1,0 +1,152 @@
+{
+  "C1": {
+    "dialogues": 100,
+    "turns": 104,
+    "exact_order_accuracy": 0.41,
+    "successful_valid_exact_rate": 0.41,
+    "invalid_final_draft_rate": 0.55,
+    "completed_exact_rate": 0.41,
+    "confirmed_rate": 0.95,
+    "invalid_at_confirmation_rate": 0.5,
+    "wrong_at_confirmation_rate": 0.54,
+    "line_item_f1": 0.5981308411214953,
+    "line_item_precision": 0.5981308411214953,
+    "line_item_recall": 0.5981308411214953,
+    "item_only_f1": 0.9345794392523366,
+    "missed_clarification_rate": 0.8571428571428571,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.09,
+    "mean_turns_per_dialogue": 1.04,
+    "mean_turn_latency_ms": 3493.4317798067173,
+    "mean_tokens_per_dialogue": 2315.46,
+    "wrong_turns": 63,
+    "correct_turns": 41,
+    "by_category": {
+      "external_p": {
+        "n": 100,
+        "exact_order_accuracy": 0.41,
+        "completed_exact_rate": 0.41
+      }
+    }
+  },
+  "C2": {
+    "dialogues": 100,
+    "turns": 146,
+    "exact_order_accuracy": 0.77,
+    "successful_valid_exact_rate": 0.77,
+    "invalid_final_draft_rate": 0.15,
+    "completed_exact_rate": 0.77,
+    "confirmed_rate": 0.85,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.08,
+    "line_item_f1": 0.8037383177570093,
+    "line_item_precision": 0.8037383177570093,
+    "line_item_recall": 0.8037383177570093,
+    "item_only_f1": 0.9439252336448598,
+    "missed_clarification_rate": 0.11594202898550725,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.61,
+    "mean_turns_per_dialogue": 1.46,
+    "mean_turn_latency_ms": 990.5232780845039,
+    "mean_tokens_per_dialogue": 3277.46,
+    "wrong_turns": 69,
+    "correct_turns": 77,
+    "by_category": {
+      "external_p": {
+        "n": 100,
+        "exact_order_accuracy": 0.77,
+        "completed_exact_rate": 0.77
+      }
+    }
+  },
+  "C3": {
+    "dialogues": 100,
+    "turns": 146,
+    "exact_order_accuracy": 0.77,
+    "successful_valid_exact_rate": 0.77,
+    "invalid_final_draft_rate": 0.15,
+    "completed_exact_rate": 0.55,
+    "confirmed_rate": 0.59,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.04,
+    "line_item_f1": 0.8037383177570093,
+    "line_item_precision": 0.8037383177570093,
+    "line_item_recall": 0.8037383177570093,
+    "item_only_f1": 0.9439252336448598,
+    "missed_clarification_rate": 0.057971014492753624,
+    "unnecessary_clarification_rate": 0.2857142857142857,
+    "questions_per_dialogue": 0.87,
+    "mean_turns_per_dialogue": 1.46,
+    "mean_turn_latency_ms": 4.000456849422484,
+    "mean_tokens_per_dialogue": 3277.46,
+    "wrong_turns": 69,
+    "correct_turns": 77,
+    "by_category": {
+      "external_p": {
+        "n": 100,
+        "exact_order_accuracy": 0.77,
+        "completed_exact_rate": 0.55
+      }
+    }
+  },
+  "C4": {
+    "dialogues": 100,
+    "turns": 146,
+    "exact_order_accuracy": 0.77,
+    "successful_valid_exact_rate": 0.77,
+    "invalid_final_draft_rate": 0.15,
+    "completed_exact_rate": 0.75,
+    "confirmed_rate": 0.83,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.08,
+    "line_item_f1": 0.8037383177570093,
+    "line_item_precision": 0.8037383177570093,
+    "line_item_recall": 0.8037383177570093,
+    "item_only_f1": 0.9439252336448598,
+    "missed_clarification_rate": 0.11594202898550725,
+    "unnecessary_clarification_rate": 0.025974025974025976,
+    "questions_per_dialogue": 0.63,
+    "mean_turns_per_dialogue": 1.46,
+    "mean_turn_latency_ms": 1.5843527436205378,
+    "mean_tokens_per_dialogue": 3277.46,
+    "wrong_turns": 69,
+    "correct_turns": 77,
+    "by_category": {
+      "external_p": {
+        "n": 100,
+        "exact_order_accuracy": 0.77,
+        "completed_exact_rate": 0.75
+      }
+    }
+  },
+  "C5": {
+    "dialogues": 100,
+    "turns": 146,
+    "exact_order_accuracy": 0.77,
+    "successful_valid_exact_rate": 0.77,
+    "invalid_final_draft_rate": 0.15,
+    "completed_exact_rate": 0.54,
+    "confirmed_rate": 0.57,
+    "invalid_at_confirmation_rate": 0.0,
+    "wrong_at_confirmation_rate": 0.03,
+    "line_item_f1": 0.8037383177570093,
+    "line_item_precision": 0.8037383177570093,
+    "line_item_recall": 0.8037383177570093,
+    "item_only_f1": 0.9439252336448598,
+    "missed_clarification_rate": 0.043478260869565216,
+    "unnecessary_clarification_rate": 0.2987012987012987,
+    "questions_per_dialogue": 0.89,
+    "mean_turns_per_dialogue": 1.46,
+    "mean_turn_latency_ms": 15.922636987740328,
+    "mean_tokens_per_dialogue": 3277.46,
+    "wrong_turns": 69,
+    "correct_turns": 77,
+    "by_category": {
+      "external_p": {
+        "n": 100,
+        "exact_order_accuracy": 0.77,
+        "completed_exact_rate": 0.54
+      }
+    }
+  }
+}

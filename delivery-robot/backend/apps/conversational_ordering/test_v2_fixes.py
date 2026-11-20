@@ -248,3 +248,23 @@ class SameNameWhateverTheModelSaysTests(SimpleTestCase):
                 configuration="C3", catalog_override=SAME_NAME_CATALOG,
             )
         self.assertEqual(result["action"], "CONFIRM")
+
+
+@override_settings(AI_SAMPLE_AGREEMENT_K=0, AI_MAX_QUESTIONS=5, AI_NEAR_MATCH_THRESHOLD=0.65,
+                   AI_DELIVERY_LOCATIONS=["Blanton Hall"])
+class UnavailableNamedItemTests(SimpleTestCase):
+    """gemma3:12b picked an unavailable item the customer named in full; this used to crash."""
+
+    def test_unavailable_named_item_is_repaired_not_crashed(self):
+        catalog = [dict(_item("9", "Seasonal Soup", 1), available=False), _item("3", "Fries", 1)]
+        state = initial_session(0)
+        with mock.patch(
+            "apps.conversational_ordering.services.interpret_turn",
+            return_value=(_draft([("9", "seasonal soup", 1, [])], location="Blanton Hall"), dict(USAGE)),
+        ):
+            result, _ = parse_customer_turn(
+                uuid.uuid4(), 0, "A seasonal soup to Blanton Hall.", state,
+                configuration="C3", catalog_override=catalog,
+            )
+        self.assertEqual(result["action"], "REPAIR")
+        self.assertEqual(result["validation"]["violations"][0]["code"], "unavailable_item")

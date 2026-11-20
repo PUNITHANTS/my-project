@@ -1,0 +1,35 @@
+{
+  "C1": {
+    "turns": 320,
+    "missed_clarification_rate": 0.8079470198675497,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.145
+  },
+  "C2": {
+    "turns": 320,
+    "missed_clarification_rate": 0.5562913907284768,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.335
+  },
+  "C3": {
+    "turns": 320,
+    "missed_clarification_rate": 0.08609271523178808,
+    "unnecessary_clarification_rate": 0.10059171597633136,
+    "questions_per_dialogue": 0.775
+  },
+  "C4": {
+    "turns": 320,
+    "missed_clarification_rate": 0.09933774834437085,
+    "unnecessary_clarification_rate": 0.0,
+    "questions_per_dialogue": 0.68
+  },
+  "C5": {
+    "turns": 320,
+    "missed_clarification_rate": 0.059602649006622516,
+    "unnecessary_clarification_rate": 0.5680473372781065,
+    "questions_per_dialogue": 1.19,
+    "brier_score": 0.10653842400300051,
+    "expected_calibration_error": 0.04937730302161953,
+    "auroc": 0.8783455464555822
+  }
+}
