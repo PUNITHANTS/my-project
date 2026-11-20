@@ -1,0 +1,1897 @@
+{
+  "version": "v3",
+  "generated_at": "2026-11-20T00:00:00+00:00",
+  "source": "synthetic campus menu for dataset v3: menu A without Blanton Pizza, menu B, and two new restaurants (not exported from production)",
+  "vendors": [
+    {
+      "id": 1,
+      "name": "Red Hawk Grill",
+      "location_label": "Student Center"
+    },
+    {
+      "id": 2,
+      "name": "Library Cafe",
+      "location_label": "Sprague Library"
+    },
+    {
+      "id": 3,
+      "name": "Campus Deli",
+      "location_label": "University Hall"
+    },
+    {
+      "id": 5,
+      "name": "Hawk Smoothie Bar",
+      "location_label": "Recreation Center"
+    },
+    {
+      "id": 6,
+      "name": "Slice Factory",
+      "location_label": "Partridge Hall"
+    },
+    {
+      "id": 7,
+      "name": "Taco Loco",
+      "location_label": "Student Center"
+    },
+    {
+      "id": 8,
+      "name": "Boba Bar",
+      "location_label": "Sprague Library"
+    },
+    {
+      "id": 9,
+      "name": "Curry Corner",
+      "location_label": "University Hall"
+    },
+    {
+      "id": 10,
+      "name": "Night Owl Diner",
+      "location_label": "Life Hall"
+    },
+    {
+      "id": 11,
+      "name": "Green Bowl",
+      "location_label": "College Hall"
+    }
+  ],
+  "items": [
+    {
+      "id": "101",
+      "name": "Classic Chicken Burger",
+      "description": "Grilled chicken breast, lettuce, and tomato on a bun.",
+      "price": "8.50",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 1011,
+          "name": "Sauce",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mayo",
+            "No mayo",
+            "Ketchup",
+            "No onions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "102",
+      "name": "Spicy Chicken Burger",
+      "description": "Crispy chicken with spicy sauce.",
+      "price": "9.00",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 1021,
+          "name": "Sauce",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mayo",
+            "No mayo",
+            "Spicy sauce",
+            "No onions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "103",
+      "name": "Grilled Chicken Burger",
+      "description": "Char-grilled chicken burger.",
+      "price": "9.25",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 1031,
+          "name": "Sauce",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mayo",
+            "No mayo",
+            "BBQ sauce",
+            "No onions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "104",
+      "name": "Veggie Burger",
+      "description": "Plant-based patty with lettuce and tomato.",
+      "price": "8.75",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 1041,
+          "name": "Sauce",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mayo",
+            "No mayo",
+            "Ketchup",
+            "No onions"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "105",
+      "name": "Chicken Wrap",
+      "description": "Grilled chicken, lettuce, and tomato in a wrap.",
+      "price": "8.25",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 1051,
+          "name": "Add-ons",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 3,
+          "options": [
+            "No onions",
+            "No cheese",
+            "Extra chicken"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "106",
+      "name": "Fries",
+      "description": "Seasoned fries.",
+      "price": "3.50",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 1061,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "107",
+      "name": "Seasonal Soup",
+      "description": "Rotating soup. Marked unavailable so unavailable-item cases can be tested.",
+      "price": "4.50",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": false,
+      "max_quantity": 3,
+      "option_groups": []
+    },
+    {
+      "id": "201",
+      "name": "Lemonade",
+      "description": "Fresh lemonade. Offered in one size only.",
+      "price": "2.75",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 2011,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "202",
+      "name": "Cola",
+      "description": "Fountain cola.",
+      "price": "2.25",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 2021,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "203",
+      "name": "Iced Green Tea",
+      "description": "Unsweetened iced tea.",
+      "price": "2.25",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 2031,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "204",
+      "name": "Coffee",
+      "description": "Drip coffee.",
+      "price": "2.50",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 2041,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Small",
+            "Regular",
+            "Large"
+          ]
+        },
+        {
+          "id": 2042,
+          "name": "Milk",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 1,
+          "options": [
+            "Whole milk",
+            "Oat milk",
+            "No dairy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "205",
+      "name": "Iced Latte",
+      "description": "Espresso and milk over ice. Currently unavailable.",
+      "price": "4.75",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": false,
+      "max_quantity": 3,
+      "option_groups": [
+        {
+          "id": 2051,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "301",
+      "name": "Veggie Wrap",
+      "description": "Hummus, greens, and roasted vegetables.",
+      "price": "7.75",
+      "vendor_id": 3,
+      "vendor": "Campus Deli",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 3011,
+          "name": "Bread",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "White wrap",
+            "Wheat wrap"
+          ]
+        },
+        {
+          "id": 3012,
+          "name": "Add-ons",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "No onions",
+            "No cheese"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "302",
+      "name": "Turkey Sandwich",
+      "description": "Sliced turkey with lettuce and tomato.",
+      "price": "8.00",
+      "vendor_id": 3,
+      "vendor": "Campus Deli",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 3021,
+          "name": "Bread",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "White",
+            "Wheat",
+            "Wrap"
+          ]
+        },
+        {
+          "id": 3022,
+          "name": "Add-ons",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mayo",
+            "No mayo",
+            "No onions",
+            "No cheese"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "303",
+      "name": "Garden Salad",
+      "description": "Mixed greens with tomato and cucumber.",
+      "price": "6.50",
+      "vendor_id": 3,
+      "vendor": "Campus Deli",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 3031,
+          "name": "Dressing",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Ranch",
+            "Italian",
+            "No dressing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "108",
+      "name": "Chicken Tenders",
+      "description": "Crispy chicken tenders.",
+      "price": "7.50",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 1081,
+          "name": "Dipping sauce",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Ranch",
+            "BBQ",
+            "Honey mustard"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "109",
+      "name": "Onion Rings",
+      "description": "Beer-battered onion rings.",
+      "price": "4.00",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 1091,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "110",
+      "name": "Grilled Cheese",
+      "description": "Toasted sandwich with cheddar.",
+      "price": "5.50",
+      "vendor_id": 1,
+      "vendor": "Red Hawk Grill",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": []
+    },
+    {
+      "id": "206",
+      "name": "Blueberry Muffin",
+      "description": "Baked blueberry muffin.",
+      "price": "2.95",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": []
+    },
+    {
+      "id": "207",
+      "name": "Bagel",
+      "description": "Toasted bagel.",
+      "price": "3.25",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 2071,
+          "name": "Spread",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Butter",
+            "Cream cheese",
+            "Plain"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "208",
+      "name": "Hot Chocolate",
+      "description": "Steamed hot chocolate.",
+      "price": "3.00",
+      "vendor_id": 2,
+      "vendor": "Library Cafe",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 2081,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "304",
+      "name": "Tuna Sandwich",
+      "description": "Tuna salad on bread.",
+      "price": "7.50",
+      "vendor_id": 3,
+      "vendor": "Campus Deli",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 3041,
+          "name": "Bread",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "White",
+            "Wheat",
+            "Wrap"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "305",
+      "name": "Potato Chips",
+      "description": "Bag of chips.",
+      "price": "1.75",
+      "vendor_id": 3,
+      "vendor": "Campus Deli",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 3051,
+          "name": "Flavor",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Plain",
+            "BBQ",
+            "Salt and vinegar"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "306",
+      "name": "Chocolate Chip Cookie",
+      "description": "Fresh-baked cookie.",
+      "price": "1.95",
+      "vendor_id": 3,
+      "vendor": "Campus Deli",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 6,
+      "option_groups": []
+    },
+    {
+      "id": "501",
+      "name": "Berry Smoothie",
+      "description": "Strawberry, blueberry, and banana.",
+      "price": "5.50",
+      "vendor_id": 5,
+      "vendor": "Hawk Smoothie Bar",
+      "vendor_location": "Recreation Center",
+      "available": true,
+      "max_quantity": 3,
+      "option_groups": [
+        {
+          "id": 5011,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "502",
+      "name": "Green Smoothie",
+      "description": "Spinach, apple, and banana.",
+      "price": "5.75",
+      "vendor_id": 5,
+      "vendor": "Hawk Smoothie Bar",
+      "vendor_location": "Recreation Center",
+      "available": true,
+      "max_quantity": 3,
+      "option_groups": [
+        {
+          "id": 5021,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "503",
+      "name": "Chicken Rice Bowl",
+      "description": "Rice, grilled chicken, and vegetables.",
+      "price": "10.25",
+      "vendor_id": 5,
+      "vendor": "Hawk Smoothie Bar",
+      "vendor_location": "Recreation Center",
+      "available": true,
+      "max_quantity": 3,
+      "option_groups": [
+        {
+          "id": 5031,
+          "name": "Sauce",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Teriyaki",
+            "Garlic",
+            "No sauce"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "504",
+      "name": "Tofu Rice Bowl",
+      "description": "Rice, tofu, and vegetables.",
+      "price": "9.75",
+      "vendor_id": 5,
+      "vendor": "Hawk Smoothie Bar",
+      "vendor_location": "Recreation Center",
+      "available": true,
+      "max_quantity": 3,
+      "option_groups": [
+        {
+          "id": 5041,
+          "name": "Sauce",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Teriyaki",
+            "Garlic",
+            "No sauce"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "505",
+      "name": "Acai Bowl",
+      "description": "Acai, granola, and fruit. Currently unavailable.",
+      "price": "8.50",
+      "vendor_id": 5,
+      "vendor": "Hawk Smoothie Bar",
+      "vendor_location": "Recreation Center",
+      "available": false,
+      "max_quantity": 2,
+      "option_groups": []
+    },
+    {
+      "id": "601",
+      "name": "Pizza",
+      "description": "Build your own pizza.",
+      "price": "11.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": [
+        {
+          "id": 9001,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Small",
+            "Medium",
+            "Large",
+            "Extra large"
+          ]
+        },
+        {
+          "id": 9002,
+          "name": "Crust",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 1,
+          "options": [
+            "Thin crust",
+            "Deep dish",
+            "Stuffed crust",
+            "Gluten-free crust"
+          ]
+        },
+        {
+          "id": 9003,
+          "name": "Toppings",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 5,
+          "options": [
+            "Pepperoni",
+            "Sausage",
+            "Ham",
+            "Bacon",
+            "Chicken",
+            "Tuna",
+            "Salami",
+            "Anchovies",
+            "Mushrooms",
+            "Onions",
+            "Peppers",
+            "Olives",
+            "Pineapple",
+            "Spinach",
+            "Pesto",
+            "Extra cheese"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "602",
+      "name": "Coke",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "603",
+      "name": "Diet Coke",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "604",
+      "name": "Pepsi",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "605",
+      "name": "Diet Pepsi",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "606",
+      "name": "Sprite",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "607",
+      "name": "Diet Sprite",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "608",
+      "name": "Fanta",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "609",
+      "name": "Dr Pepper",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "610",
+      "name": "Iced Tea",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "611",
+      "name": "Diet Iced Tea",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "612",
+      "name": "Mountain Dew",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "613",
+      "name": "Water",
+      "description": "",
+      "price": "2.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": true,
+      "max_quantity": 10,
+      "option_groups": []
+    },
+    {
+      "id": "620",
+      "name": "Garlic Bread",
+      "description": "",
+      "price": "4.00",
+      "vendor_id": 6,
+      "vendor": "Slice Factory",
+      "vendor_location": "Partridge Hall",
+      "available": false,
+      "max_quantity": 6,
+      "option_groups": []
+    },
+    {
+      "id": "701",
+      "name": "Chicken Taco",
+      "description": "",
+      "price": "3.50",
+      "vendor_id": 7,
+      "vendor": "Taco Loco",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 6,
+      "option_groups": [
+        {
+          "id": 9005,
+          "name": "Tortilla",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Corn",
+            "Flour"
+          ]
+        },
+        {
+          "id": 9101,
+          "name": "Extras",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mild salsa",
+            "Hot salsa",
+            "Guacamole",
+            "No cheese"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "702",
+      "name": "Steak Taco",
+      "description": "",
+      "price": "4.00",
+      "vendor_id": 7,
+      "vendor": "Taco Loco",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 6,
+      "option_groups": [
+        {
+          "id": 9006,
+          "name": "Tortilla",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Corn",
+            "Flour"
+          ]
+        },
+        {
+          "id": 9102,
+          "name": "Extras",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mild salsa",
+            "Hot salsa",
+            "Guacamole",
+            "No cheese"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "703",
+      "name": "Veggie Taco",
+      "description": "",
+      "price": "3.25",
+      "vendor_id": 7,
+      "vendor": "Taco Loco",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 6,
+      "option_groups": [
+        {
+          "id": 9007,
+          "name": "Tortilla",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Corn",
+            "Flour"
+          ]
+        },
+        {
+          "id": 9103,
+          "name": "Extras",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mild salsa",
+            "Hot salsa",
+            "Guacamole",
+            "No cheese"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "704",
+      "name": "Burrito Bowl",
+      "description": "",
+      "price": "9.50",
+      "vendor_id": 7,
+      "vendor": "Taco Loco",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9008,
+          "name": "Protein",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Chicken",
+            "Steak",
+            "Sofritas"
+          ]
+        },
+        {
+          "id": 9009,
+          "name": "Rice",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "White rice",
+            "Brown rice"
+          ]
+        },
+        {
+          "id": 9010,
+          "name": "Toppings",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 3,
+          "options": [
+            "Black beans",
+            "Corn salsa",
+            "Sour cream",
+            "Guacamole"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "705",
+      "name": "Chips and Salsa",
+      "description": "",
+      "price": "3.00",
+      "vendor_id": 7,
+      "vendor": "Taco Loco",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 6,
+      "option_groups": []
+    },
+    {
+      "id": "706",
+      "name": "Quesadilla",
+      "description": "",
+      "price": "7.00",
+      "vendor_id": 7,
+      "vendor": "Taco Loco",
+      "vendor_location": "Student Center",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9011,
+          "name": "Filling",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Cheese",
+            "Chicken",
+            "Steak"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "707",
+      "name": "Churros",
+      "description": "",
+      "price": "4.00",
+      "vendor_id": 7,
+      "vendor": "Taco Loco",
+      "vendor_location": "Student Center",
+      "available": false,
+      "max_quantity": 6,
+      "option_groups": []
+    },
+    {
+      "id": "801",
+      "name": "Classic Milk Tea",
+      "description": "",
+      "price": "5.00",
+      "vendor_id": 8,
+      "vendor": "Boba Bar",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9015,
+          "name": "Sweetness",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No sugar",
+            "Half sugar",
+            "Full sugar"
+          ]
+        },
+        {
+          "id": 9016,
+          "name": "Ice",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No ice",
+            "Less ice",
+            "Regular ice"
+          ]
+        },
+        {
+          "id": 9017,
+          "name": "Toppings",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Boba",
+            "Lychee jelly",
+            "Pudding"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "802",
+      "name": "Taro Milk Tea",
+      "description": "",
+      "price": "5.50",
+      "vendor_id": 8,
+      "vendor": "Boba Bar",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9018,
+          "name": "Sweetness",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No sugar",
+            "Half sugar",
+            "Full sugar"
+          ]
+        },
+        {
+          "id": 9019,
+          "name": "Ice",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No ice",
+            "Less ice",
+            "Regular ice"
+          ]
+        },
+        {
+          "id": 9020,
+          "name": "Toppings",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Boba",
+            "Lychee jelly",
+            "Pudding"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "803",
+      "name": "Matcha Milk Tea",
+      "description": "",
+      "price": "5.75",
+      "vendor_id": 8,
+      "vendor": "Boba Bar",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9021,
+          "name": "Sweetness",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No sugar",
+            "Half sugar",
+            "Full sugar"
+          ]
+        },
+        {
+          "id": 9022,
+          "name": "Ice",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No ice",
+            "Less ice",
+            "Regular ice"
+          ]
+        },
+        {
+          "id": 9023,
+          "name": "Toppings",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Boba",
+            "Lychee jelly",
+            "Pudding"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "804",
+      "name": "Mango Fruit Tea",
+      "description": "",
+      "price": "5.25",
+      "vendor_id": 8,
+      "vendor": "Boba Bar",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9024,
+          "name": "Ice",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No ice",
+            "Less ice",
+            "Regular ice"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "805",
+      "name": "Passion Fruit Tea",
+      "description": "",
+      "price": "5.25",
+      "vendor_id": 8,
+      "vendor": "Boba Bar",
+      "vendor_location": "Sprague Library",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9025,
+          "name": "Ice",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No ice",
+            "Less ice",
+            "Regular ice"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "806",
+      "name": "Brown Sugar Milk Tea",
+      "description": "",
+      "price": "6.00",
+      "vendor_id": 8,
+      "vendor": "Boba Bar",
+      "vendor_location": "Sprague Library",
+      "available": false,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9026,
+          "name": "Sweetness",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No sugar",
+            "Half sugar",
+            "Full sugar"
+          ]
+        },
+        {
+          "id": 9027,
+          "name": "Ice",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "No ice",
+            "Less ice",
+            "Regular ice"
+          ]
+        },
+        {
+          "id": 9028,
+          "name": "Toppings",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Boba",
+            "Lychee jelly",
+            "Pudding"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "901",
+      "name": "Chicken Curry",
+      "description": "",
+      "price": "10.50",
+      "vendor_id": 9,
+      "vendor": "Curry Corner",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9031,
+          "name": "Spice level",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Mild",
+            "Medium",
+            "Hot"
+          ]
+        },
+        {
+          "id": 9032,
+          "name": "Side",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Rice",
+            "Naan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "902",
+      "name": "Lamb Curry",
+      "description": "",
+      "price": "12.00",
+      "vendor_id": 9,
+      "vendor": "Curry Corner",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9033,
+          "name": "Spice level",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Mild",
+            "Medium",
+            "Hot"
+          ]
+        },
+        {
+          "id": 9034,
+          "name": "Side",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Rice",
+            "Naan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "903",
+      "name": "Chickpea Curry",
+      "description": "",
+      "price": "9.50",
+      "vendor_id": 9,
+      "vendor": "Curry Corner",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9035,
+          "name": "Spice level",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Mild",
+            "Medium",
+            "Hot"
+          ]
+        },
+        {
+          "id": 9036,
+          "name": "Side",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Rice",
+            "Naan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "904",
+      "name": "Samosas",
+      "description": "",
+      "price": "4.50",
+      "vendor_id": 9,
+      "vendor": "Curry Corner",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": []
+    },
+    {
+      "id": "905",
+      "name": "Mango Lassi",
+      "description": "",
+      "price": "4.00",
+      "vendor_id": 9,
+      "vendor": "Curry Corner",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 9037,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "906",
+      "name": "Garlic Naan",
+      "description": "",
+      "price": "3.00",
+      "vendor_id": 9,
+      "vendor": "Curry Corner",
+      "vendor_location": "University Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": []
+    },
+    {
+      "id": "907",
+      "name": "Paneer Curry",
+      "description": "",
+      "price": "11.00",
+      "vendor_id": 9,
+      "vendor": "Curry Corner",
+      "vendor_location": "University Hall",
+      "available": false,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 9038,
+          "name": "Spice level",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Mild",
+            "Medium",
+            "Hot"
+          ]
+        },
+        {
+          "id": 9039,
+          "name": "Side",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Rice",
+            "Naan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1001",
+      "name": "Fries",
+      "description": "",
+      "price": "3.75",
+      "vendor_id": 10,
+      "vendor": "Night Owl Diner",
+      "vendor_location": "Life Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 11001,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1002",
+      "name": "Veggie Burger",
+      "description": "",
+      "price": "9.00",
+      "vendor_id": 10,
+      "vendor": "Night Owl Diner",
+      "vendor_location": "Life Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 11002,
+          "name": "Sauce",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Mayo",
+            "No mayo",
+            "Ketchup",
+            "Hot sauce"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1003",
+      "name": "Pancakes",
+      "description": "",
+      "price": "6.50",
+      "vendor_id": 10,
+      "vendor": "Night Owl Diner",
+      "vendor_location": "Life Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 11003,
+          "name": "Topping",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Maple syrup",
+            "Strawberries",
+            "Chocolate chips"
+          ]
+        },
+        {
+          "id": 11004,
+          "name": "Stack",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Short stack",
+            "Full stack"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1004",
+      "name": "Breakfast Sandwich",
+      "description": "",
+      "price": "6.00",
+      "vendor_id": 10,
+      "vendor": "Night Owl Diner",
+      "vendor_location": "Life Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 11005,
+          "name": "Bread",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Bagel",
+            "English muffin",
+            "Croissant"
+          ]
+        },
+        {
+          "id": 11006,
+          "name": "Add-ons",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 2,
+          "options": [
+            "Bacon",
+            "Sausage",
+            "No cheese"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1005",
+      "name": "Hash Browns",
+      "description": "",
+      "price": "2.75",
+      "vendor_id": 10,
+      "vendor": "Night Owl Diner",
+      "vendor_location": "Life Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": []
+    },
+    {
+      "id": "1006",
+      "name": "Omelette",
+      "description": "",
+      "price": "7.50",
+      "vendor_id": 10,
+      "vendor": "Night Owl Diner",
+      "vendor_location": "Life Hall",
+      "available": false,
+      "max_quantity": 3,
+      "option_groups": []
+    },
+    {
+      "id": "1101",
+      "name": "Grain Bowl",
+      "description": "",
+      "price": "11.50",
+      "vendor_id": 11,
+      "vendor": "Green Bowl",
+      "vendor_location": "College Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 11007,
+          "name": "Protein",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Salmon",
+            "Tofu",
+            "Chicken"
+          ]
+        },
+        {
+          "id": 11008,
+          "name": "Base",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Brown rice",
+            "Quinoa",
+            "Greens"
+          ]
+        },
+        {
+          "id": 11009,
+          "name": "Toppings",
+          "required": false,
+          "min_selections": 0,
+          "max_selections": 3,
+          "options": [
+            "Avocado",
+            "Edamame",
+            "Cucumber",
+            "Corn"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1102",
+      "name": "Hummus Wrap",
+      "description": "",
+      "price": "8.00",
+      "vendor_id": 11,
+      "vendor": "Green Bowl",
+      "vendor_location": "College Hall",
+      "available": true,
+      "max_quantity": 5,
+      "option_groups": [
+        {
+          "id": 11010,
+          "name": "Bread",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "White wrap",
+            "Wheat wrap"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1103",
+      "name": "Garden Salad",
+      "description": "",
+      "price": "7.25",
+      "vendor_id": 11,
+      "vendor": "Green Bowl",
+      "vendor_location": "College Hall",
+      "available": true,
+      "max_quantity": 4,
+      "option_groups": [
+        {
+          "id": 11011,
+          "name": "Dressing",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Ranch",
+            "Balsamic",
+            "No dressing"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1104",
+      "name": "Berry Smoothie",
+      "description": "",
+      "price": "6.25",
+      "vendor_id": 11,
+      "vendor": "Green Bowl",
+      "vendor_location": "College Hall",
+      "available": true,
+      "max_quantity": 3,
+      "option_groups": [
+        {
+          "id": 11012,
+          "name": "Size",
+          "required": true,
+          "min_selections": 1,
+          "max_selections": 1,
+          "options": [
+            "Regular",
+            "Large"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "1105",
+      "name": "Kombucha",
+      "description": "",
+      "price": "4.50",
+      "vendor_id": 11,
+      "vendor": "Green Bowl",
+      "vendor_location": "College Hall",
+      "available": false,
+      "max_quantity": 5,
+      "option_groups": []
+    }
+  ]
+}

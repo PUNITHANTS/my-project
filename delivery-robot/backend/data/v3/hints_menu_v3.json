@@ -1,0 +1,224 @@
+{
+  "_about": "Generation-only wording hints for menu_snapshot_v3.json. Not used by the assistant.",
+  "items": {
+    "106": {
+      "unit": "order"
+    },
+    "108": {
+      "unit": "order"
+    },
+    "109": {
+      "unit": "order"
+    },
+    "305": {
+      "unit": "bag"
+    },
+    "201": {
+      "family": "drink"
+    },
+    "202": {
+      "family": "drink"
+    },
+    "203": {
+      "family": "drink"
+    },
+    "204": {
+      "family": "drink"
+    },
+    "208": {
+      "family": "drink"
+    },
+    "503": {
+      "family": "rice bowl"
+    },
+    "504": {
+      "family": "rice bowl"
+    },
+    "206": {
+      "family": ""
+    },
+    "306": {
+      "family": ""
+    },
+    "602": {
+      "family": "soda"
+    },
+    "604": {
+      "family": "soda"
+    },
+    "606": {
+      "family": "soda"
+    },
+    "608": {
+      "family": "soda"
+    },
+    "609": {
+      "family": "soda"
+    },
+    "612": {
+      "family": "soda"
+    },
+    "603": {
+      "family": "diet soda"
+    },
+    "605": {
+      "family": "diet soda"
+    },
+    "607": {
+      "family": "diet soda"
+    },
+    "610": {
+      "family": ""
+    },
+    "611": {
+      "family": ""
+    },
+    "613": {
+      "family": ""
+    },
+    "601": {
+      "family": ""
+    },
+    "801": {
+      "family": "milk tea"
+    },
+    "802": {
+      "family": "milk tea"
+    },
+    "803": {
+      "family": "milk tea"
+    },
+    "804": {
+      "family": "fruit tea"
+    },
+    "805": {
+      "family": "fruit tea"
+    },
+    "705": {
+      "unit": "order",
+      "family": ""
+    },
+    "904": {
+      "unit": "order",
+      "family": ""
+    },
+    "906": {
+      "family": ""
+    },
+    "1005": {
+      "unit": "order",
+      "family": ""
+    },
+    "1003": {
+      "unit": "order",
+      "family": ""
+    },
+    "1101": {
+      "family": "bowl"
+    },
+    "1102": {
+      "family": "wrap"
+    }
+  },
+  "groups": {
+    "Bread": {
+      "say": "on {option}"
+    },
+    "Tortilla": {
+      "say": "on {option} tortillas"
+    },
+    "Spice level": {
+      "before": true
+    },
+    "Crust": {
+      "say": "with {option}"
+    },
+    "Stack": {
+      "say": "as a {option}"
+    },
+    "Base": {
+      "say": "on {option}"
+    },
+    "Topping": {
+      "say": "with {option}"
+    }
+  },
+  "off_menu": [
+    {
+      "request": "a milkshake",
+      "vendor_id": 2
+    },
+    {
+      "request": "a cappuccino",
+      "vendor_id": 2
+    },
+    {
+      "request": "a caesar salad",
+      "vendor_id": 3
+    },
+    {
+      "request": "a fish sandwich",
+      "vendor_id": 3
+    },
+    {
+      "request": "mozzarella sticks",
+      "vendor_id": 1
+    },
+    {
+      "request": "a breakfast burrito",
+      "vendor_id": 1
+    },
+    {
+      "request": "a protein shake",
+      "vendor_id": 5
+    },
+    {
+      "request": "a poke bowl",
+      "vendor_id": 5
+    },
+    {
+      "request": "a root beer",
+      "vendor_id": 6
+    },
+    {
+      "request": "a calzone",
+      "vendor_id": 6
+    },
+    {
+      "request": "a fish taco",
+      "vendor_id": 7
+    },
+    {
+      "request": "nachos",
+      "vendor_id": 7
+    },
+    {
+      "request": "a thai tea",
+      "vendor_id": 8
+    },
+    {
+      "request": "a strawberry smoothie",
+      "vendor_id": 8
+    },
+    {
+      "request": "butter chicken",
+      "vendor_id": 9
+    },
+    {
+      "request": "biryani",
+      "vendor_id": 9
+    },
+    {
+      "request": "a mango smoothie",
+      "vendor_id": 9
+    },
+    {
+      "request": "waffles",
+      "vendor_id": 10
+    },
+    {
+      "request": "a falafel wrap",
+      "vendor_id": 11
+    }
+  ]
+}

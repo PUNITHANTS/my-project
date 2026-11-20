@@ -111,6 +111,30 @@ def matches_gold(result, gold):
     return expected_vendor is None or str(result.get("vendorId")) == str(expected_vendor)
 
 
+def line_counts(result, gold):
+    """(matched, predicted, gold) line counts for line-item F1.
+
+    ``strict`` lines must match item, quantity and options; ``item`` lines only
+    the menu item, so a right item with a wrong size still counts there.
+    """
+    from collections import Counter
+
+    predicted = Counter(_canonical_items(result.get("items", []), "menuItemId"))
+    expected = Counter(_canonical_items(gold.get("items", []), "menu_item_id"))
+    predicted_ids = Counter(line[0] for line in predicted.elements())
+    expected_ids = Counter(line[0] for line in expected.elements())
+    return {
+        "strict": (sum((predicted & expected).values()), sum(predicted.values()), sum(expected.values())),
+        "item": (sum((predicted_ids & expected_ids).values()), sum(predicted_ids.values()), sum(expected_ids.values())),
+    }
+
+
+def f1(matched, predicted, expected):
+    precision = matched / predicted if predicted else 0.0
+    recall = matched / expected if expected else 0.0
+    return 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+
+
 def _write_jsonl(path, rows):
     path.write_text(
         "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows),
@@ -293,15 +317,20 @@ class Command(BaseCommand):
                     continue
                 exact = matches_gold(final_result, dialogue["gold_order"])
                 final_valid = bool(final_result["valid_for_submission"])
+                confirmed = final_result["action"] == "CONFIRM"
+                counts = line_counts(final_result, dialogue["gold_order"])
                 turns_seen.append(dialogue_turn_count)
-                bucket = by_category.setdefault(dialogue["category"], {"n": 0, "exact": 0})
+                bucket = by_category.setdefault(dialogue["category"], {"n": 0, "exact": 0, "completed": 0})
                 bucket["n"] += 1
                 bucket["exact"] += int(exact)
+                bucket["completed"] += int(final_result["action"] == "CONFIRM" and exact and final_valid)
                 dialogue_results.append(
                     {
                         "exact": exact,
                         "valid": final_valid,
                         "invalid": not final_valid,
+                        "confirmed": confirmed,
+                        "lines": counts,
                     }
                 )
                 with (output_dir / "progress.jsonl").open("a", encoding="utf-8") as progress_file:
@@ -313,6 +342,8 @@ class Command(BaseCommand):
                                 "category": dialogue["category"],
                                 "exact": exact,
                                 "valid": final_valid,
+                                "final_action": final_result["action"],
+                                "completed_exact": confirmed and exact and final_valid,
                                 "turns": dialogue_turn_count,
                             }
                         )
@@ -320,6 +351,11 @@ class Command(BaseCommand):
                     )
 
             count = len(dialogue_results)
+            confirmed_rows = [row for row in dialogue_results if row["confirmed"]]
+            line_totals = {
+                kind: [sum(row["lines"][kind][i] for row in dialogue_results) for i in range(3)]
+                for kind in ("strict", "item")
+            }
             summary = {
                 "dialogues": count,
                 "turns": sum(turns_seen),
@@ -330,6 +366,19 @@ class Command(BaseCommand):
                 "invalid_final_draft_rate": sum(
                     row["invalid"] for row in dialogue_results
                 ) / count,
+                # Task success: the assistant reached CONFIRM with the right, valid
+                # order. exact_order_accuracy above also counts dialogues whose last
+                # draft is right while the assistant is still asking a question.
+                "completed_exact_rate": sum(
+                    row["confirmed"] and row["exact"] and row["valid"] for row in dialogue_results
+                ) / count,
+                "confirmed_rate": len(confirmed_rows) / count,
+                "invalid_at_confirmation_rate": sum(not row["valid"] for row in confirmed_rows) / count,
+                "wrong_at_confirmation_rate": sum(not row["exact"] for row in confirmed_rows) / count,
+                "line_item_f1": f1(*line_totals["strict"]),
+                "line_item_precision": line_totals["strict"][0] / line_totals["strict"][1] if line_totals["strict"][1] else 0.0,
+                "line_item_recall": line_totals["strict"][0] / line_totals["strict"][2] if line_totals["strict"][2] else 0.0,
+                "item_only_f1": f1(*line_totals["item"]),
                 "missed_clarification_rate": missed / wrong_turns if wrong_turns else None,
                 "unnecessary_clarification_rate": (
                     unnecessary / correct_turns if correct_turns else None
@@ -341,7 +390,8 @@ class Command(BaseCommand):
                 "wrong_turns": wrong_turns,
                 "correct_turns": correct_turns,
                 "by_category": {
-                    name: {"n": row["n"], "exact_order_accuracy": row["exact"] / row["n"]}
+                    name: {"n": row["n"], "exact_order_accuracy": row["exact"] / row["n"],
+                           "completed_exact_rate": row["completed"] / row["n"]}
                     for name, row in sorted(by_category.items())
                 },
             }

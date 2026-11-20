@@ -1,0 +1,80 @@
+{
+  "menu": {
+    "vendors": 10,
+    "items": 74,
+    "unavailable": 9
+  },
+  "seed_p": {
+    "train": 180,
+    "validation": 60,
+    "test": 60
+  },
+  "external_p": 100,
+  "splits": {
+    "train": {
+      "dialogues": 600,
+      "categories": {
+        "ambiguous_item": 50,
+        "clear_request": 50,
+        "correction": 50,
+        "customization": 50,
+        "multi_item": 50,
+        "multi_problem": 50,
+        "partial_answer": 50,
+        "pizza_seed": 50,
+        "quantity_limit": 50,
+        "removal": 50,
+        "same_name": 50,
+        "unavailable_option": 50
+      },
+      "restyled": 531,
+      "seeds_used": 180
+    },
+    "validation": {
+      "dialogues": 200,
+      "categories": {
+        "ambiguous_item": 17,
+        "clear_request": 17,
+        "correction": 17,
+        "customization": 17,
+        "multi_item": 17,
+        "multi_problem": 17,
+        "partial_answer": 16,
+        "pizza_seed": 16,
+        "quantity_limit": 16,
+        "removal": 17,
+        "same_name": 16,
+        "unavailable_option": 17
+      },
+      "restyled": 179,
+      "seeds_used": 60
+    },
+    "test": {
+      "dialogues": 200,
+      "categories": {
+        "ambiguous_item": 17,
+        "clear_request": 17,
+        "correction": 17,
+        "customization": 17,
+        "multi_item": 17,
+        "multi_problem": 17,
+        "partial_answer": 16,
+        "pizza_seed": 16,
+        "quantity_limit": 16,
+        "removal": 17,
+        "same_name": 16,
+        "unavailable_option": 17
+      },
+      "restyled": 167,
+      "seeds_used": 60
+    }
+  },
+  "restyle": {
+    "tried": 920,
+    "kept": 878
+  },
+  "pizza_seed_edit_failures": 0,
+  "gold_problems_dropped": [],
+  "external_p_seeds_used": [],
+  "seed_groups_in_two_splits": []
+}

@@ -173,6 +173,9 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--sample", type=int, default=300)
     parser.add_argument("--seed", type=int, default=11)
+    parser.add_argument("--holdout", type=int, default=0,
+                        help="Also write this many orders that come after the sample (never run, never seen)")
+    parser.add_argument("--holdout-out", help="Where to write the holdout orders")
     args = parser.parse_args()
     rng = random.Random(args.seed)
     kept, skipped = [], Counter()
@@ -200,6 +203,13 @@ def main():
         for number_, row in enumerate(sample, start=1):
             row = {"dialogue_id": f"pizza-{number_:04d}", **row}
             handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+    if args.holdout:
+        holdout = kept[args.sample: args.sample + args.holdout]
+        with open(args.holdout_out, "w", encoding="utf-8") as handle:
+            for number_, row in enumerate(holdout, start=1):
+                row = {"dialogue_id": f"extp-{number_:04d}", **row, "category": "external_p"}
+                handle.write(json.dumps(row, ensure_ascii=False) + "\n")
+        print(f"wrote {len(holdout)} holdout orders to {args.holdout_out}")
     print(f"kept {len(kept)}, skipped {sum(skipped.values())} {dict(skipped)}; wrote {len(sample)} to {args.out}")
 
 
